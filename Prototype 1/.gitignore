@@ -1,0 +1,29 @@
+# Unity generated
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+UserSettings/
+
+# Visual Studio / MonoDevelop generated
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+
+# Unity3D generated meta files
+*.pidb.meta
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# Builds
+*.apk
+*.unitypackage
