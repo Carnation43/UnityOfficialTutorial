@@ -35,7 +35,7 @@ Its main uses include:
 <details>
 <summary><b>Singleton Pattern Introduction</b></summary>
 
-The line <b>public static GameManager Instance;</b> &nbsp;is a common implementation of the <b>Singleton Pattern（单例模式）</b> in game development.
+The line <b>public static GameManager Instance;</b> in GameManager.cs &nbsp;is a common implementation of the <b>Singleton Pattern（单例模式）</b> in game development.
 
 The Singleton Pattern is a design patter that ensures a class has only one instance throughout the entire application and provides a global access point to that instance.
 
@@ -53,3 +53,47 @@ In games, certain core manager classes(like GameManager, UI Manager, AudioManage
 
 #### Notes:
 ▲ The line <b>private void OnTriggerEnter(Collider other)</b> illustrates that When A collides with B and the script is attached to B, the <b>other</b> parameter in the <b>OnTriggerEnter</b> function represents A. Morever, both game objects A and B need to have the <b>isTrigger</b> option checked, and one of them requires a <b>RigidBody</b> component.
+
+### Prototype 3
+
+#### Feature:
+- Add sounds and paricles when the character is running, jumping, and crashing.
+- With the animations from the animator controller, the character will have 3 new anmations that occur int 3 different game states including running, jumping, and death.
+
+#### Display:
+<div style="display: flex; justify-content: center; align-items: center">
+<img src="media/Prototype_3.gif" alt="示例图01">
+</div>
+
+#### Knowledge point:
+<details>
+<summary><b>ForceMode</b></summary>
+ForceMode is an <b>enum</b> in Unity that determines how force is applied to a <b>RigidBody</b> via the <b>AddForce()</b> method. The 4 Types of ForceMode:
+
+<b>1. ForceMode.Force (Default)</b>
+Applies a continuous force. Best for simulating sustained forces like thrusters, wind, or custom gravity.
+<b>2. ForceMode.Impluse</b>
+Applies an instantaneous impulse. Best for simulating sudden impacts like jumps, collisions, or bullet hits.
+<b>3. ForceMode.VelocityChange</b>
+Directly modifies velocity. Best for precise velocity control, such as teleport-like movement or forced knockback.
+<b>4. ForceMode.Acceleration</b>
+Applies continuous acceleration. Best for simulating mass-agnostic acceleration, like spaceship thrust in zero-gravity.
+</details>
+
+<details>
+<summary><b>GetComponent<>()</b></summary>
+</details>
+All components attached to a GameObject are stored in a tightly packed, linear array within the native(C++) memory managed by the Unity engine.<i>[The core part of the Unity engine is written in C++, which directly manages the computer's "native memory"].</i>
+
+a navie <b>GetComponent<>()</b> operation would work like searching Array.This native approach has a time complexity of <b>O(n)</b>.
+
+Unity does not use the naive approach for every call. It employs optimizations. leading to two primary execution paths:
+1. The Fast Path: the engine knows the typical location or has a precomputed lookup key (like a hash) for these critcial components. This allows it to find them in near-constant time, <b>O(1)</b>, bypassing the need for a full array iteration（迭代）.
+2. The Slow Path: It resembles the linear iteration process described above. However, Unity applies optimizations: 
+- <b>Type Caching: </b>After the first successful <b>GetComponent<<none>MyCustomScript>() </b> call, the engine may cache the reference to that component type on that specific GameObject. Subsequent calls for the same type can then be served from the cache, making them much faster.<i>[Like Cache ?]</i>
+
+- <b>Important Note:</b> This cache is per-type, not per-variable. Calling <b>GetComponent<<none>MyCustomScript>() </b>from two different scripts will likely hit the cache on the second call.
+
+#### Notes:
+
+▲ The line <b>private void OnCollisionEnter(Collision collision)</b> in PlayerController.cs shows that the prerequisite for two objects to collide is that at least one side has a Rigidbody and both sides have a Collider (and Is Trigger is not checked). 
