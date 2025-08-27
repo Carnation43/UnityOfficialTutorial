@@ -71,15 +71,19 @@ In games, certain core manager classes(like GameManager, UI Manager, AudioManage
 ForceMode is an <b>enum</b> in Unity that determines how force is applied to a <b>RigidBody</b> via the <b>AddForce()</b> method. The 4 Types of ForceMode:
 
 <b>1. ForceMode.Force (Default)</b>
+
 Applies a continuous force. Best for simulating sustained forces like thrusters, wind, or custom gravity.
 
 <b>2. ForceMode.Impluse</b>
+
 Applies an instantaneous impulse. Best for simulating sudden impacts like jumps, collisions, or bullet hits.
 
 <b>3. ForceMode.VelocityChange</b>
+
 Directly modifies velocity. Best for precise velocity control, such as teleport-like movement or forced knockback.
 
 <b>4. ForceMode.Acceleration</b>
+
 Applies continuous acceleration. Best for simulating mass-agnostic acceleration, like spaceship thrust in zero-gravity.
 
 </details>
