@@ -72,17 +72,21 @@ ForceMode is an <b>enum</b> in Unity that determines how force is applied to a <
 
 <b>1. ForceMode.Force (Default)</b>
 Applies a continuous force. Best for simulating sustained forces like thrusters, wind, or custom gravity.
+
 <b>2. ForceMode.Impluse</b>
 Applies an instantaneous impulse. Best for simulating sudden impacts like jumps, collisions, or bullet hits.
+
 <b>3. ForceMode.VelocityChange</b>
 Directly modifies velocity. Best for precise velocity control, such as teleport-like movement or forced knockback.
+
 <b>4. ForceMode.Acceleration</b>
 Applies continuous acceleration. Best for simulating mass-agnostic acceleration, like spaceship thrust in zero-gravity.
+
 </details>
 
 <details>
 <summary><b>GetComponent<>()</b></summary>
-</details>
+
 All components attached to a GameObject are stored in a tightly packed, linear array within the native(C++) memory managed by the Unity engine.<i>[The core part of the Unity engine is written in C++, which directly manages the computer's "native memory"].</i>
 
 a navie <b>GetComponent<>()</b> operation would work like searching Array.This native approach has a time complexity of <b>O(n)</b>.
@@ -93,6 +97,7 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 - <b>Type Caching: </b>After the first successful <b>GetComponent<<none>MyCustomScript>() </b> call, the engine may cache the reference to that component type on that specific GameObject. Subsequent calls for the same type can then be served from the cache, making them much faster.<i>[Like Cache ?]</i>
 
 - <b>Important Note:</b> This cache is per-type, not per-variable. Calling <b>GetComponent<<none>MyCustomScript>() </b>from two different scripts will likely hit the cache on the second call.
+</details>
 
 #### Notes:
 
