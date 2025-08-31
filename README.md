@@ -106,3 +106,74 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 #### Notes:
 
 ▲ The line <b>private void OnCollisionEnter(Collision collision)</b> in PlayerController.cs shows that the prerequisite for two objects to collide is that at least one side has a Rigidbody and both sides have a Collider (and Is Trigger is not checked). 
+
+### Prototype 4
+
+#### Feature:
+- The enemy will chase the player around the island.
+- A powerup will spawn in a random position on the map and last for 5 seconds after pickup, granting the player super strength that blasts away enemies.
+- The Spawn Manager will operate in waves, spawning multiple enemies and a new powerup with each iteration.
+
+#### Display:
+<div style="display: flex; justify-content: center; align-items: center">
+<img src="media/Prototype_4.gif" alt="示例图01">
+</div>
+
+#### Knowledge point:
+<details>
+<summary><b>Coroutine</b></summary>
+Coroutines in Unity are specialized functions that can pause execution at specific points and resume later, making theme ideal for handling phased logic or delayed actions.
+
+1. <b>The Nature of Coroutines: Iterator-Based State Machines</b>
+
+    Coroutines are fundamentally built on Csharp's <b>IEnumerator</b> interface, functioning as pausable, resumable state machines:
+    
+    The <b>IEnumerator</b> interface has two critical members:
+    
+    - <b>object Current:</b> Returns the element at the current iteration position.
+    - <b>bool MoveNext():</b> Advances the iterator to the next state; returns true if there's more to process, false when finished. 
+
+    When a coroutine reached <b>yield return</b>: 1. It pauses execution of the current method. 2. It records the current execution position (context). 3. It returns control to the Unity Engine. 4. It resumes from the paused position once specific conditions are met.
+
+2. <b>Relationship with the Main Thread</b>
+
+    Coroutines do not create new threads; all code run on the main thread. Thus, time-consuming operations(such as complex calculations) within a coroutine will still block the main thread, causing stutters.
+
+    The Unity engine checks the status of all active coroutines at specific points each frame(e.g., after <b>Update</b> and before <b>LateUpdate</b>).If resumption conditions are met(e.g., <b>yield return null</b> waiting for the next frame), the coroutine's remaining code continues executing.
+
+3. <b>Key Differences between Threads and Coroutines</b>
+
+    |      Differences      |      Thread      |      Coroutine      |
+    | --------------------- | ---------------- | -------------------- |
+    | Scheduling Method     | Kernel-level Preemptive (The OS forcibly allocates CPU resources, e.g., switching threads every 10ms) | User-level Cooperative (Coroutines decide when to yield CPU on their own, e.g., yielding when encountering IO blocking) |
+    | Context Switch Overhead | High (Needs to enter kernel mode, save/restore thread context, and perform security checks) | Low (User-mode switch, only saves the coroutine’s "execution progress" such as the current line of code and variable values) |
+    | Resource Footprint | Large (A single thread occupies several MBs of memory); a process can have at most a few thousand threads | Extremely small (A single coroutine occupies several KBs of memory); a single thread can host tens of thousands or even hundreds of thousands of coroutines |
+    | Applicable Scenarios | CPU-intensive tasks (e.g., complex algorithms), I/O-intensive tasks (but with low efficiency) | I/O-intensive tasks (e.g., API calls, database queries, file reading/writing) |
+
+4. <b>yield return Type</b>
+    - yield return null: Pauses for one frame and resumes after Update and before LateUpdate
+    - yield return new WaitForSeconds(): Pauses for a specified duration.
+    - yield return new WaitForEndOfFrame(): Pauses until the end of the current frame.
+    - yield return new WaitForFixedUpdate(): Pauses until the next FixedUpdate executioon
+    - yield return StartCoroutine(AnotherCoroutine()): Pauses the current coroutine and resumes only after another coroutine finishes executing.
+    - yield return www/yield return unityWebRequest: Pauses until a network request completes.
+
+5. <b>Methods for "Starting and Stopping" Coroutines</b>
+
+    <b>Starting Coroutines</b>: Can only be done via the <b>MonoBehaviour</b> method <b>StartCoroutine()</b>, with two calling styles:
+
+    - Start without references: <b>StartCoroutine(MyCoroutine())</b> (cannot stop individually; only <b>StopAllCoroutines()</b> works).
+    - Start with reference: <b>Coroutine coroutineRef = StartCoroutine(MyCoroutine())</b> (can stop the specific coroutine via <b>StopCoroutine(coroutineRef)</b>—more flexible).
+
+    <b>Stopping Coroutines</b>: 
+
+    - StopCoroutine(coroutineRef)
+    - StopCoroutine("MyCoroutine")
+    - StopAllCoroutines()
+    - Hidden Rule: If the MonoBehaviour hosting the coroutine is destroyed (Destroy(gameObject)), all its unfinished coroutines will stop automatically. However, if the coroutine contains logic that "accesses destroyed objects," null reference errors may still occur—always check if the object is alive inside the coroutine.
+    
+</details>
+
+#### Notes:
+
+▲ The Line <b>Vector3 lookDirection = (player.transform.position - transform.position).normalized;</b> shows that using vector subtraction to calculate the direction vector between two objects (enemy and player) gives a vector that contains not only directional information but also has a length(magnitude) representing the straight-line distance betweeen the two objects.
