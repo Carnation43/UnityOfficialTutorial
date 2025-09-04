@@ -1,24 +1,15 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DetectCollisions : MonoBehaviour
 {
-
-    // Start is called before the first frame update
-    void Start()
+    void OnTriggerEnter(Collider other)
     {
-        
-    }
+        // Instead of destroying the projectile when it collides with an animal
+        //Destroy(other.gameObject); 
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
+        // Just deactivate the food and destroy the animal
         if (other.CompareTag("Bullet"))
         {
             DifferentScores differentScores = GetComponent<DifferentScores>();
@@ -27,14 +18,12 @@ public class DetectCollisions : MonoBehaviour
                 ScoreManager.instance.AddScore(differentScores.scoreValue);
 
             GetComponent<AnimalBar>().FeedAnimal(1);
-        
-            Destroy(other.gameObject); // Ïú»Ù×Óµ¯
-         
+
+            other.gameObject.SetActive(false);
         }
 
         if (other.CompareTag("Player"))
         {
-
             DifferentDamage differentDamage = GetComponent<DifferentDamage>();
             HealthManager.instance.Damage(differentDamage.damageValue);
         }

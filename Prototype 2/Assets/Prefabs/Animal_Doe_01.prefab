@@ -351,12 +351,12 @@ GameObject:
   - component: {fileID: 4258957770907177080}
   - component: {fileID: 8581071721643052299}
   - component: {fileID: 6738562047114406306}
-  - component: {fileID: 860228635687325311}
-  - component: {fileID: 8051799243850717254}
   - component: {fileID: 1924761655768718232}
   - component: {fileID: 7996416935592758588}
   - component: {fileID: 8970229922550904046}
   - component: {fileID: 301380766007950800}
+  - component: {fileID: 4908695572409123233}
+  - component: {fileID: -8852066891048167582}
   m_Layer: 0
   m_Name: Animal_Doe_01
   m_TagString: Untagged
@@ -424,30 +424,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
---- !u!114 &860228635687325311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5612692706584740567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aadc813c2f7b4bc4b8afd47c31eeab87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8051799243850717254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5612692706584740567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14467fab87d97994fab2980c971ec289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1924761655768718232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -509,6 +485,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hungerSlider: {fileID: 461521646099123191}
   amountToBeFed: 2
+--- !u!114 &4908695572409123233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5612692706584740567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c52ee72091692143869a36cdefe1fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8852066891048167582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5612692706584740567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81e62e9a8a22fac478a927ce940e28f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6248981123835182099
 GameObject:
   m_ObjectHideFlags: 0

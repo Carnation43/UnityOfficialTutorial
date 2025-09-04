@@ -863,10 +863,11 @@ GameObject:
   - component: {fileID: 2006122223777354942}
   - component: {fileID: 4188572318056267913}
   - component: {fileID: 7581009325729607093}
-  - component: {fileID: -791592006067036103}
   - component: {fileID: 5377342562199638836}
   - component: {fileID: 4210365966939953101}
   - component: {fileID: 8802538387001003363}
+  - component: {fileID: 420083591140862175}
+  - component: {fileID: 3383609357221726862}
   m_Layer: 0
   m_Name: Animal_Stag_01
   m_TagString: Untagged
@@ -967,18 +968,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.115987696, y: 0.35751283, z: 0.38434863}
   m_Center: {x: 0.00000030344182, y: 0.18074937, z: 0.048936673}
---- !u!114 &-791592006067036103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8935946117883739694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14467fab87d97994fab2980c971ec289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5377342562199638836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1019,6 +1008,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hungerSlider: {fileID: 3621181290072198484}
   amountToBeFed: 1
+--- !u!114 &420083591140862175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8935946117883739694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c52ee72091692143869a36cdefe1fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3383609357221726862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8935946117883739694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81e62e9a8a22fac478a927ce940e28f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3042091570379957896
 PrefabInstance:
   m_ObjectHideFlags: 0

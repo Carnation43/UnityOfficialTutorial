@@ -1,61 +1,49 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Player Settings")]
-    public float horizontalInput;
-    public float verticalInput;
-    public float speed;
-    public float xRange;
-    public float zTop;
-    public float zBottom;
+    private float horizontalInput;
+    private float speed = 20.0f;
+    private float xRange = 20;
+    public GameObject projectilePrefab;
 
-    [Header("Projectile Settings")]
-    public GameObject projectile;
-    private float cooldown = 0.5f;
-
-    private float timer;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
     {
-        // keep the player in bounds
-        if(transform.position.x > xRange)
-        {
-            transform.position = new Vector3(xRange, transform.position.y, transform.position.z);
-        }
-        if(transform.position.x < -xRange)
+        // Check for left and right bounds
+        if (transform.position.x < -xRange)
         {
             transform.position = new Vector3(-xRange, transform.position.y, transform.position.z);
         }
 
-        if (transform.position.z > zTop)
+        if (transform.position.x > xRange)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, zTop);
+            transform.position = new Vector3(xRange, transform.position.y, transform.position.z);
         }
-        if (transform.position.z < zBottom)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, zBottom);
-        }
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.right * speed * Time.deltaTime * horizontalInput, Space.Self);
-        transform.Translate(Vector3.forward * speed * Time.deltaTime * verticalInput * 0.5f, Space.Self);
 
-        
-        timer += Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space) && timer > cooldown)
+        // Player movement left to right
+        horizontalInput = Input.GetAxis("Horizontal");
+        transform.Translate(Vector3.right * Time.deltaTime * speed * horizontalInput);
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Instantiate(projectile, transform.position, transform.rotation);
-            Debug.Log("Bullets Generation");
-            timer = 0;
+            // No longer necessary to Instantiate prefabs
+            // Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+
+            // Get an object object from the pool
+            GameObject pooledProjectile = ObjectPooler.SharedInstance.GetPooledObject();
+            if (pooledProjectile != null)
+            {
+                pooledProjectile.SetActive(true); // activate it
+                pooledProjectile.transform.position = transform.position; // position it at player
+            }
         }
+
+
+
     }
 }
