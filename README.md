@@ -1,6 +1,8 @@
 bb# UnityOfficialTutorial
 做游戏是我的梦想，即使困难重重。
 
+## Unity Junior Programmer
+
 ### Prototype 1
 
 #### Features: 
@@ -22,7 +24,7 @@ Its main uses include:
 
 ### Prototype 2
 
-#### Feature:
+#### Features:
 - When the number of lives reaches 0, log "GAME OVER" and "Restart" button in the middle of the screen.
 - Display a "hunger bar" on top of each of the animals. Each animal require different amounts of food.
 
@@ -97,7 +99,7 @@ The "pre-allocation" of the object pool is typically completed once during progr
 
 ### Prototype 3
 
-#### Feature:
+#### Features:
 - Add sounds and paricles when the character is running, jumping, and crashing.
 - With the animations from the animator controller, the character will have 3 new anmations that occur int 3 different game states including running, jumping, and death.
 
@@ -150,7 +152,7 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 
 ### Prototype 4
 
-#### Feature:
+#### Features:
 - The enemy will chase the player around the island.
 - A powerup will spawn in a random position on the map and last for 5 seconds after pickup, granting the player super strength that blasts away enemies.
 - The Spawn Manager will operate in waves, spawning multiple enemies and a new powerup with each iteration.
@@ -221,7 +223,7 @@ Coroutines in Unity are specialized functions that can pause execution at specif
 
 ### Prototype 5 (Including Challenge 5)
 
-#### Feature:
+#### Features:
 - Each difficulty will affect the spawn rate of the targets.
 - Implement a User Interface into project, such as a title screen and score display.
 
@@ -289,3 +291,345 @@ The rendering logic of UGUI follows a "staged, collaborative". It can be divided
     restTime = 0.5s -> 0.5 + 1 = 1.5 -> display 1.5s;
 
 When there is no **timer += 1;** the countdown will appear to end abruptly visually.
+
+## Tutorials on Youtube
+
+### FIRST PERSON MOVEMENT
+
+#### Implemented features:
+
+- **Rotate the camera** 
+- **Player movement, sprinting, jumping and crouching**
+
+#### Core codes:
+
+##### file structure:
+- Scene
+    - Player
+        - Orientation
+        - Capsule
+        - CameraPos
+    - CameraHolder
+        - Main Camera
+
+<details>
+<summary><b>click to expand(CameraController.cs)</b></summary>
+
+```csharp
+    float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
+    float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+    yRotation += mouseX; // rotate along the y axis
+    xRotation -= mouseY; // rotate along the x axis
+
+    xRotation = Mathf.Clamp(xRotation, -90f, 90f); // limited rotate angle
+
+    // rotate camera and orientation
+    transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+    orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+```
+
+orientation is a class within the Transform component.
+
+</details>
+
+<details>
+<summary><b>click to expand(MoveCamera.cs)</b></summary>
+
+```csharp
+    public Transform cameraPosition;
+    // Update camera position
+    void Update()
+    {
+        transform.position = cameraPosition.position;
+    }
+```
+MoveCamera.cs is attached to CameraHolder.
+</details>
+
+<details>
+<summary><b>click to expand(PlayerMovement.cs)</b></summary>
+
+<br />
+
+- **Variable Overview**
+    ```csharp
+        [Header("Movement")]
+    private float moveSpeed;
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float groundDrag;
+
+    [Header("Jump")]
+    public float jumpForce;
+    public float jumpCooldown;
+    public float airMultiplier;
+    bool readyToJump;
+
+    [Header("Crouch")]
+    public float crouchSpeed;
+    public float crouchYScale;
+    private float startYScale;
+
+    [Header("Keybinds")]
+    public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode sprintKey = KeyCode.LeftShift;
+    public KeyCode crouchKey = KeyCode.LeftControl;
+
+    [Header("Ground Check")]
+    public float playerHeight;
+    public LayerMask whatIsGround;
+    bool grounded;
+
+    [Header("Slope Handling")]
+    public float maxSlopeAngle;
+    private RaycastHit slopeHit;
+    private bool exitingSlope;
+
+    public Transform orientation;
+
+    float horizontalInput;
+    float verticalInput;
+
+    Vector3 moveDir;
+
+    Rigidbody rb;
+
+    public MovementState state;
+    public enum MovementState
+    {
+        walkState,
+        sprintState,
+        crouchState,
+        air
+    }
+    ```
+
+<br />
+
+- **Feature 1 – Flat Movement**
+    ```csharp
+    /**
+    *   MovePlayer() on the ground
+    */
+    // move direction
+    moveDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+    // on ground
+    if(grounded)
+        rb.AddForce(moveDir.normalized * moveSpeed * 10f, ForceMode.Force);
+
+    /**
+    *   SpeedControl() avoid high speed
+    */
+    Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+    if (flatVel.magnitude > moveSpeed)
+    {
+        Vector3 limitedVel = flatVel.normalized * moveSpeed;
+        rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+    }
+    ```
+    The value of **grounded** comes from **Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround)** under the Update function.
+
+    Adding +0.3f can handle incomplete terrain.
+
+    whatIsGround is a LayerMask.
+
+    **Achievement effect: Before——After**
+    The player will slide for a certain distance on flat ground; use rb.drag to solve this issue.
+
+    ```sharp
+    if (grounded)
+        rb.drag = groundDrag;
+    else
+        rb.drag = 0;
+    ```
+    <div align="center">
+    <img src="media/FirstPersonMovement/Before/MoveOnTheGround.gif" width="45%" alt="Before">
+    <img src="media/FirstPersonMovement/After/MoveOnTheGround.gif" width="45%" alt="After">
+    </div>
+
+<br />
+
+- **Feature 2 - Sprinting**
+
+    ```csharp
+    /**
+    *   sprinting state in StateHandler()
+    */
+
+    // Run
+    else if (grounded && Input.GetKey(sprintKey))
+    {
+        state = MovementState.sprintState; 
+        moveSpeed = sprintSpeed;
+    }
+    // Walk
+    else if (grounded)
+    {
+        state = MovementState.walkState;
+        moveSpeed = walkSpeed;
+    }
+    ```
+    **Achievement effect: After**
+    <div align="center">
+    <img src="media/FirstPersonMovement/After/Sprinting.gif" width="45%" alt="Before">
+    </div>
+
+<br />
+
+- **Feature 3 - Jumping**
+
+    ```csharp
+    /**
+    *   jump in MyInput()
+    */
+
+    // jump
+    if (Input.GetKey(jumpKey) && readyToJump && grounded)
+    {
+        readyToJump = false;
+
+        Jump();
+
+        Invoke(nameof(ResetJump), jumpCooldown);
+    }
+
+    /**
+    *   Jump()
+    */
+    private void Jump()
+    {
+        exitingSlope = true;    // This can be ignored for now.
+
+        // Ensure that the player always starts jumping from a stationary vertical state.
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z); 
+
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+
+    /**
+    *   ResetJump()
+    */
+    private void ResetJump()
+    {
+        readyToJump = true;
+        exitingSlope = false;   // This can be ignored for now.
+    }
+    ```
+    **Achievement effect: After**
+    <div align="center">
+    <img src="media/FirstPersonMovement/After/Jumping.gif" width="45%" alt="After">
+    </div>
+
+<br />
+
+- **Feature 4 - Crouching**
+
+    ```csharp
+     // start crouch
+    if (Input.GetKeyDown(crouchKey))
+    {
+        transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);  // prevent floating in the air
+    }
+
+    // stop crouch
+    if (Input.GetKeyUp(crouchKey))
+    {
+        transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+    }
+
+    /**
+    *   crouching state in StateHandler()
+    */
+    if (Input.GetKey(crouchKey))
+    {
+        Debug.Log("Crouching");
+        state = MovementState.crouchState;
+        moveSpeed = crouchSpeed;
+    }
+
+    ```
+    **Crouching Process:**
+    <div align="center">
+    <img src="media/FirstPersonMovement/After/Crouching.jpg" width="45%" alt="After">
+    </div>
+
+    **Achievement effect: After**
+    <div align="center">
+    <img src="media/FirstPersonMovement/After/Crouching.gif" width="45%" alt="After">
+    </div>
+
+<br />
+
+- **Feature 5 - Slope Movement**
+
+    ```csharp
+    /**
+    *  In MovePlayer()
+    */
+
+    // on slope
+    if (OnSlope() && !exitingSlope)
+    {
+        rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+
+        if(rb.velocity.y > 0)
+        {
+            rb.AddForce(Vector3.down * 80f, ForceMode.Force); // prevent the player bouncing like a ball
+        }
+    }
+
+    private Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(moveDir, slopeHit.normal).normalized;
+    }
+
+    /**
+    *   Whether the player is on a slope
+    */
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxSlopeAngle && angle != 0;
+        }
+        return false;
+    }
+    ```
+    **Vector3.ProjectOnPlane()** projects the flat ground vector onto the slope.
+    **slopeHit** is of type **RaycastHit**, and its function is to store raycast detection information, including: **the coordinates of the collision point, the normal of the collision surface, the collided game object, etc.**
+    **Vector3.Angle()** returns the angle in degrees between two vectors[0, 180].
+
+    **Achievement effect: Before——After**
+    The player will not bounce like a ball when moving downhill.
+    <div align="center">
+    <img src="media/FirstPersonMovement/Before/MoveOnTheSlope.gif" width="45%" alt="Before">
+    <img src="media/FirstPersonMovement/After/MoveOnTheSlope.gif" width="45%" alt="After">
+    </div>
+
+    But the player may slide slightly on the slop. Add code **rb.useGravity = !OnSlope();** into **MovePlayer()** to solve this issue.
+
+    **Achievement effect: Before——After**
+    <div align="center">
+    <img src="media/FirstPersonMovement/Before/SlipOnTheSlope.gif" width="45%" alt="Before">
+    <img src="media/FirstPersonMovement/After/SlipOnTheSlope.gif" width="45%" alt="After">
+    </div>
+
+    ```csharp
+    /**
+    *   SpeedControl() avoid high speed
+    */
+    // limiting speed on slope
+    if (OnSlope() && !exitingSlope) 
+    {
+        if (rb.velocity.magnitude > moveSpeed)
+            rb.velocity = rb.velocity.normalized * moveSpeed;
+    }
+    ```
+    **exitingSlope** is to prevent the inability to jump on slopes. When the player jumps, set it to true; and set it to false in **ResetJump().**
+
+</details>
