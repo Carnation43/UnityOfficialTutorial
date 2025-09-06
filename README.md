@@ -445,10 +445,9 @@ MoveCamera.cs is attached to CameraHolder.
     else
         rb.drag = 0;
     ```
-    <div align="center">
-    <img src="media/FirstPersonMovement/Before/MoveOnTheGround.gif" width="45%" alt="Before">
-    <img src="media/FirstPersonMovement/After/MoveOnTheGround.gif" width="45%" alt="After">
-    </div>
+    | Before | After |
+    | --- | --- |
+    | ![Before](media/FirstPersonMovement/Before/MoveOnTheGround.gif) | ![After](media/FirstPersonMovement/After/MoveOnTheGround.gif) |
 
 <br />
 
