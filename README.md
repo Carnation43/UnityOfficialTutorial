@@ -473,13 +473,10 @@ MoveCamera.cs is attached to CameraHolder.
     }
     ```
     **Achievement effect: After**
-    <div style="text-align: center;">
 
     | After |
     | :---: |
     | ![After](media/FirstPersonMovement/After/Sprinting.gif) |
-
-    </div>
 
 <br />
 
@@ -523,10 +520,15 @@ MoveCamera.cs is attached to CameraHolder.
     }
     ```
     **Achievement effect: After**
-    <div align="center">
-    <img src="media/FirstPersonMovement/After/Jumping.gif" width="45%" alt="After">
-    </div>
 
+    <div align="center">
+
+    | After |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/Jumping.gif) |  
+
+    </div>
+    
 <br />
 
 - **Feature 4 - Crouching**
