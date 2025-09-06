@@ -347,7 +347,7 @@ orientation is a class within the Transform component.
 MoveCamera.cs is attached to CameraHolder.
 </details>
 
-<details>
+<detaisls>
 <summary><b>click to expand(PlayerMovement.cs)</b></summary>
 
 <br />
@@ -437,6 +437,7 @@ MoveCamera.cs is attached to CameraHolder.
     whatIsGround is a LayerMask.
 
     **Achievement effect: Before——After**
+
     The player will slide for a certain distance on flat ground; use rb.drag to solve this issue.
 
     ```sharp
@@ -446,7 +447,7 @@ MoveCamera.cs is attached to CameraHolder.
         rb.drag = 0;
     ```
     | Before | After |
-    | --- | --- |
+    | :---: | :---: |
     | ![Before](media/FirstPersonMovement/Before/MoveOnTheGround.gif) | ![After](media/FirstPersonMovement/After/MoveOnTheGround.gif) |
 
 <br />
@@ -472,8 +473,12 @@ MoveCamera.cs is attached to CameraHolder.
     }
     ```
     **Achievement effect: After**
-    <div align="center">
-    <img src="media/FirstPersonMovement/After/Sprinting.gif" width="45%" alt="Before">
+    <div style="text-align: center;">
+
+    | After |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/Sprinting.gif) |
+
     </div>
 
 <br />
