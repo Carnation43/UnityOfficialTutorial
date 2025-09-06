@@ -8,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
     private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
-
     public float groundDrag;
 
     [Header("Jump")]
@@ -36,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitingSlope;
-
+    
     public Transform orientation;
 
     float horizontalInput;
@@ -125,7 +124,7 @@ public class PlayerMovement : MonoBehaviour
 
             if(rb.velocity.y > 0)
             {
-                rb.AddForce(Vector3.down * 80f, ForceMode.Force);
+                rb.AddForce(Vector3.down * 90f, ForceMode.Force);
             }
         }
 
@@ -168,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
     {
         exitingSlope = true;
 
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
@@ -189,13 +188,13 @@ public class PlayerMovement : MonoBehaviour
             moveSpeed = crouchSpeed;
         }
 
-        // Walk
+        // Run
         else if (grounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprintState; 
             moveSpeed = sprintSpeed;
         }
-        // Run
+        // Walk
         else if (grounded)
         {
             state = MovementState.walkState;
