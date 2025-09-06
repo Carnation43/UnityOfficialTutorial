@@ -408,6 +408,7 @@ MoveCamera.cs is attached to CameraHolder.
 <br />
 
 - **Feature 1 – Flat Movement**
+
     ```csharp
     /**
     *   MovePlayer() on the ground
@@ -430,22 +431,24 @@ MoveCamera.cs is attached to CameraHolder.
         rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
     }
     ```
+
     The value of **grounded** comes from **Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, whatIsGround)** under the Update function.
 
     Adding +0.3f can handle incomplete terrain.
 
     whatIsGround is a LayerMask.
 
-    **Achievement effect: Before——After**
+    **Achievement effect:**
 
     The player will slide for a certain distance on flat ground; use rb.drag to solve this issue.
 
-    ```sharp
+    ```csharp
     if (grounded)
         rb.drag = groundDrag;
     else
         rb.drag = 0;
     ```
+
     | Before | After |
     | :---: | :---: |
     | ![Before](media/FirstPersonMovement/Before/MoveOnTheGround.gif) | ![After](media/FirstPersonMovement/After/MoveOnTheGround.gif) |
@@ -472,11 +475,15 @@ MoveCamera.cs is attached to CameraHolder.
         moveSpeed = walkSpeed;
     }
     ```
-    **Achievement effect: After**
+    **Achievement effect:**
+
+    <div align="center">
 
     | After |
     | :---: |
     | ![After](media/FirstPersonMovement/After/Sprinting.gif) |
+
+    </div>
 
 <br />
 
@@ -519,7 +526,8 @@ MoveCamera.cs is attached to CameraHolder.
         exitingSlope = false;   // This can be ignored for now.
     }
     ```
-    **Achievement effect: After**
+
+    **Achievement effect:**
 
     <div align="center">
 
@@ -528,7 +536,7 @@ MoveCamera.cs is attached to CameraHolder.
     | ![After](media/FirstPersonMovement/After/Jumping.gif) |  
 
     </div>
-    
+
 <br />
 
 - **Feature 4 - Crouching**
@@ -558,14 +566,25 @@ MoveCamera.cs is attached to CameraHolder.
     }
 
     ```
+
     **Crouching Process:**
+
     <div align="center">
-    <img src="media/FirstPersonMovement/After/Crouching.jpg" width="45%" alt="After">
+
+    | After |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/Crouching.jpg) |  
+
     </div>
 
-    **Achievement effect: After**
+    **Achievement effect:**
+
     <div align="center">
-    <img src="media/FirstPersonMovement/After/Crouching.gif" width="45%" alt="After">
+
+    | After |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/Crouching.gif) |  
+
     </div>
 
 <br />
@@ -606,24 +625,28 @@ MoveCamera.cs is attached to CameraHolder.
         return false;
     }
     ```
+
     **Vector3.ProjectOnPlane()** projects the flat ground vector onto the slope.
+
     **slopeHit** is of type **RaycastHit**, and its function is to store raycast detection information, including: **the coordinates of the collision point, the normal of the collision surface, the collided game object, etc.**
+
     **Vector3.Angle()** returns the angle in degrees between two vectors[0, 180].
 
-    **Achievement effect: Before——After**
+    **Achievement effect:**
+
     The player will not bounce like a ball when moving downhill.
-    <div align="center">
-    <img src="media/FirstPersonMovement/Before/MoveOnTheSlope.gif" width="45%" alt="Before">
-    <img src="media/FirstPersonMovement/After/MoveOnTheSlope.gif" width="45%" alt="After">
-    </div>
+
+    | Before | After |
+    | :---: | :---: |
+    | ![Before](media/FirstPersonMovement/Before/MoveOnTheSlope.gif) | ![After](media/FirstPersonMovement/After/MoveOnTheSlope.gif) |
 
     But the player may slide slightly on the slop. Add code **rb.useGravity = !OnSlope();** into **MovePlayer()** to solve this issue.
 
-    **Achievement effect: Before——After**
-    <div align="center">
-    <img src="media/FirstPersonMovement/Before/SlipOnTheSlope.gif" width="45%" alt="Before">
-    <img src="media/FirstPersonMovement/After/SlipOnTheSlope.gif" width="45%" alt="After">
-    </div>
+    **Achievement effect:**
+
+    | Before | After |
+    | :---: | :---: |
+    | ![Before](media/FirstPersonMovement/Before/SlipOnTheSlope.gif) | ![After](media/FirstPersonMovement/After/SlipOnTheSlope.gif) |
 
     ```csharp
     /**
@@ -636,6 +659,7 @@ MoveCamera.cs is attached to CameraHolder.
             rb.velocity = rb.velocity.normalized * moveSpeed;
     }
     ```
+
     **exitingSlope** is to prevent the inability to jump on slopes. When the player jumps, set it to true; and set it to false in **ResetJump().**
 
 </details>
