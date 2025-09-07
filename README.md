@@ -30,6 +30,7 @@ Its main uses include:
 2. Picture-in-picture effects: A secondary camera can render a small inset(e.g. a minimap or charcater close-up) within the main camera's view.
 
 **▌ Notes:**
+
 ▲ Replace **Update()** with **LateUpdate()** to prevent the jittering camera as the car drives down the road.
 
 <br />
@@ -119,6 +120,7 @@ The "pre-allocation" of the object pool is typically completed once during progr
 <br />
 
 **▌ Notes:**
+
 ▲ The line **private void OnTriggerEnter(Collider other)** illustrates that When A collides with B and the script is attached to B, the **other** parameter in the **OnTriggerEnter** function represents A. Morever, both game objects A and B need to have the **isTrigger** option checked, and one of them requires a **RigidBody** component.
 
 <br />
