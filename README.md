@@ -681,7 +681,7 @@ MoveCamera.cs is attached to CameraHolder.
     - CameraHolder
         - Main Camera
 
-<detaisls>
+<details>
 
 <summary><b>click to expand(Sliding.cs)</b></summary>
 
@@ -869,13 +869,13 @@ MoveCamera.cs is attached to CameraHolder.
 
     <div align="center">
 
-    | Problem |
+    | Sliding |
     | :---: |
     | ![After](media/FirstPersonMovement/After/SlideNoProblem.gif) |  
 
     </div>
 
-    **More Interesting:** Add a bouncy pad that impulses the player into the air.
+- **More Interesting:** Add a bouncy pad that impulses the player into the air.
 
     ```csharp
     /**
@@ -915,4 +915,4 @@ MoveCamera.cs is attached to CameraHolder.
 
     </div>
 
-</detaisls>
+</details>
