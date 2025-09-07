@@ -1,3 +1,23 @@
+<style>
+  /* 隐藏四级标题默认样式并自定义 */
+  h4 {
+    display: block; /* 保持块级元素特性 */
+    font-size: 16px; /* 自定义字体大小 */
+    font-weight: normal; /* 取消默认加粗 */
+    margin: 0; /* 取消默认外边距 */
+    /* 可以添加其他样式：color、font-family等 */
+  }
+  
+  /* 隐藏五级标题默认样式并自定义 */
+  h5 {
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+    /* 自定义其他样式 */
+  }
+</style>
+
 # UnityOfficialTutorial
 做游戏是我的梦想，即使困难重重。
 
@@ -5,7 +25,7 @@
 
 ### Prototype 1
 
-<h4> Features: </h4>
+<h4> Features:</h4>
 - Allow the player to press a key on the keyboard to switch camera views.
 - Transform this into a "local multiplayer" spilt-screen game with two cars where one car is controlled by WASD and the other is controlled by the arrow keys.
 
@@ -14,7 +34,7 @@
 <img src="media/Prototype_1.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>:
+<h4>Knowledge point:</h4>
 In Unity's Camera component, **Viewport Rect** defines the area of the screen where the camera's rendered output will be displayed.
 Its main uses include:
 1. Split-screen setups: For multiplayers games, multiple cameras can render to separate screen regions(e.g. two cameras each taking 50% width for side-by-side views).
@@ -24,7 +44,7 @@ Its main uses include:
 
 ### Prototype 2
 
-<h4>Features</h4>:
+<h4>Features:</h4>
 - When the number of lives reaches 0, log "GAME OVER" and "Restart" button in the middle of the screen.
 - Display a "hunger bar" on top of each of the animals. Each animal require different amounts of food.
 
@@ -33,7 +53,7 @@ Its main uses include:
 <img src="media/Prototype_2.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>:
+<h4>Knowledge point:</h4>
 <details>
 <summary><b>Singleton Pattern Introduction</b></summary>
 
@@ -99,7 +119,7 @@ The "pre-allocation" of the object pool is typically completed once during progr
 
 ### Prototype 3
 
-<h4>Features</h4>:
+<h4>Features:</h4>
 - Add sounds and paricles when the character is running, jumping, and crashing.
 - With the animations from the animator controller, the character will have 3 new anmations that occur int 3 different game states including running, jumping, and death.
 
@@ -108,7 +128,7 @@ The "pre-allocation" of the object pool is typically completed once during progr
 <img src="media/Prototype_3.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>:
+<h4>Knowledge point:</h4>
 <details>
 <summary><b>ForceMode</b></summary>
 ForceMode is an **enum** in Unity that determines how force is applied to a **RigidBody** via the **AddForce()** method. The 4 Types of ForceMode:
@@ -152,7 +172,7 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 
 ### Prototype 4
 
-<h4>Features</h4>:
+<h4>Features:</h4>
 - The enemy will chase the player around the island.
 - A powerup will spawn in a random position on the map and last for 5 seconds after pickup, granting the player super strength that blasts away enemies.
 - The Spawn Manager will operate in waves, spawning multiple enemies and a new powerup with each iteration.
@@ -162,7 +182,7 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 <img src="media/Prototype_4.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>:
+<h4>Knowledge point:</h4>
 <details>
 <summary><b>Coroutine</b></summary>
 Coroutines in Unity are specialized functions that can pause execution at specific points and resume later, making theme ideal for handling phased logic or delayed actions.
@@ -223,7 +243,7 @@ Coroutines in Unity are specialized functions that can pause execution at specif
 
 ### Prototype 5 (Including Challenge 5)
 
-<h4>Features</h4>:
+<h4>Features:</h4>
 - Each difficulty will affect the spawn rate of the targets.
 - Implement a User Interface into project, such as a title screen and score display.
 
@@ -232,7 +252,7 @@ Coroutines in Unity are specialized functions that can pause execution at specif
 <img src="media/Prototype_5.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>:
+<h4>Knowledge point:</h4>
 
 <details>
 <summary><b>The rendering logic of UGUI</b></summary>
