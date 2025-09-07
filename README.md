@@ -5,35 +5,55 @@
 
 ### Prototype 1
 
-<p style="font-weight: normal; margin: 0;"> Features:</p>
+**▌ Features:**
+
 - Allow the player to press a key on the keyboard to switch camera views.
 - Transform this into a "local multiplayer" spilt-screen game with two cars where one car is controlled by WASD and the other is controlled by the arrow keys.
 
-<p style="font-weight: bold; margin: 0; font-size: 18px;">Display:</p>
+<br />
+
+**▌ Display:**
+
 <div style="display: flex; justify-content: center; align-items: center">
 <img src="media/Prototype_1.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>
+<br />
+
+**▌ Knowledge point:**
+
 In Unity's Camera component, **Viewport Rect** defines the area of the screen where the camera's rendered output will be displayed.
 Its main uses include:
+
 1. Split-screen setups: For multiplayers games, multiple cameras can render to separate screen regions(e.g. two cameras each taking 50% width for side-by-side views).
+
 2. Picture-in-picture effects: A secondary camera can render a small inset(e.g. a minimap or charcater close-up) within the main camera's view.
-<h4>Notes:</h4>
+
+**▌ Notes:**
 ▲ Replace **Update()** with **LateUpdate()** to prevent the jittering camera as the car drives down the road.
+
+<br />
 
 ### Prototype 2
 
-<h4>Features:</h4>
+**▌ Features:**
+
 - When the number of lives reaches 0, log "GAME OVER" and "Restart" button in the middle of the screen.
+
 - Display a "hunger bar" on top of each of the animals. Each animal require different amounts of food.
 
-<h4>Display:</h4>
+<br />
+
+**▌ Display:**
+
 <div style="display: flex; justify-content: center; align-items: center">
 <img src="media/Prototype_2.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>
+<br />
+
+**▌ Knowledge point:**
+
 <details>
 <summary><b>Singleton Pattern Introduction</b></summary>
 
@@ -52,6 +72,8 @@ In games, certain core manager classes(like GameManager, UI Manager, AudioManage
 - May hide dependencies between classes
 - Can make unit testing more difficult
 </details>
+
+<br />
 
 <details>
 <summary><b>Object Pooling</b></summary>
@@ -94,21 +116,29 @@ The "pre-allocation" of the object pool is typically completed once during progr
 
 </details>
 
-<h4>Notes:</h4>
+<br />
+
+**▌ Notes:**
 ▲ The line **private void OnTriggerEnter(Collider other)** illustrates that When A collides with B and the script is attached to B, the **other** parameter in the **OnTriggerEnter** function represents A. Morever, both game objects A and B need to have the **isTrigger** option checked, and one of them requires a **RigidBody** component.
+
+<br />
 
 ### Prototype 3
 
-<h4>Features:</h4>
+**▌ Features:**
 - Add sounds and paricles when the character is running, jumping, and crashing.
 - With the animations from the animator controller, the character will have 3 new anmations that occur int 3 different game states including running, jumping, and death.
 
-<h4>Display:</h4>
+<br />
+
+**▌ Display:**
 <div style="display: flex; justify-content: center; align-items: center">
 <img src="media/Prototype_3.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>
+<br />
+
+**▌ Knowledge point:**
 <details>
 <summary><b>ForceMode</b></summary>
 ForceMode is an **enum** in Unity that determines how force is applied to a **RigidBody** via the **AddForce()** method. The 4 Types of ForceMode:
@@ -131,6 +161,8 @@ Applies continuous acceleration. Best for simulating mass-agnostic acceleration,
 
 </details>
 
+<br />
+
 <details>
 <summary><b>GetComponent<<b<>>()</b></summary>
 
@@ -146,23 +178,31 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 - **Important Note:** This cache is per-type, not per-variable. Calling **GetComponent<<none>MyCustomScript>() **from two different scripts will likely hit the cache on the second call.
 </details>
 
-<h4>Notes:</h4>
+<br />
+
+**▌ Notes:**
 
 ▲ The line **private void OnCollisionEnter(Collision collision)** in PlayerController.cs shows that the prerequisite for two objects to collide is that at least one side has a Rigidbody and both sides have a Collider (and Is Trigger is not checked). 
 
+<br />
+
 ### Prototype 4
 
-<h4>Features:</h4>
+**▌ Features:**
 - The enemy will chase the player around the island.
 - A powerup will spawn in a random position on the map and last for 5 seconds after pickup, granting the player super strength that blasts away enemies.
 - The Spawn Manager will operate in waves, spawning multiple enemies and a new powerup with each iteration.
 
-<h4>Display:</h4>
+<br />
+
+**▌ Display:**
 <div style="display: flex; justify-content: center; align-items: center">
 <img src="media/Prototype_4.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>
+<br />
+
+**▌ Knowledge point:**
 <details>
 <summary><b>Coroutine</b></summary>
 Coroutines in Unity are specialized functions that can pause execution at specific points and resume later, making theme ideal for handling phased logic or delayed actions.
@@ -217,22 +257,30 @@ Coroutines in Unity are specialized functions that can pause execution at specif
     
 </details>
 
-<h4>Notes:</h4>
+<br />
+
+**▌ Notes:**
 
 ▲ The Line **Vector3 lookDirection = (player.transform.position - transform.position).normalized;** shows that using vector subtraction to calculate the direction vector between two objects (enemy and player) gives a vector that contains not only directional information but also has a length(magnitude) representing the straight-line distance betweeen the two objects.
 
+<br />
+
 ### Prototype 5 (Including Challenge 5)
 
-<h4>Features:</h4>
+**▌ Features:**
 - Each difficulty will affect the spawn rate of the targets.
 - Implement a User Interface into project, such as a title screen and score display.
 
-<h4>Display:</h4>
+<br />
+
+**▌ Display:**
 <div style="display: flex; justify-content: center; align-items: center">
 <img src="media/Prototype_5.gif" alt="示例图01">
 </div>
 
-<h4>Knowledge point:</h4>
+<br />
+
+**▌ Knowledge point:**
 
 <details>
 <summary><b>The rendering logic of UGUI</b></summary>
@@ -280,7 +328,9 @@ The rendering logic of UGUI follows a "staged, collaborative". It can be divided
             3. The GPU executes the drawing commands, renders the UI pixels onto the screen, and completes the final display.
 </details>
 
-<h4>Notes:</h4>
+<br />
+
+**▌ Notes:**
 
 ▲ The Line **timer += 1;** in GameManagerX.cs serves to correct the discrepancy between the displayed time and the actual remaining time.For example:
 
@@ -292,18 +342,22 @@ The rendering logic of UGUI follows a "staged, collaborative". It can be divided
 
 When there is no **timer += 1;** the countdown will appear to end abruptly visually.
 
+<br />
+
 ## Tutorials on Youtube
 
 ### FIRST PERSON MOVEMENT
 
-<h4> Implemented features(2025/09/05):</h4>
+**▌  Implemented features(2025/09/05):**
 
 - **Rotate the camera** 
 - **Player movement, sprinting, jumping and crouching**
 
-<h4> Core codes:</h4>
+<br />
 
-<h5> file structure:</h5>
+**▌  Core codes:**
+
+**·  file structure:**
 
 - Scene
     - Player
@@ -334,6 +388,8 @@ orientation is a class within the Transform component.
 
 </details>
 
+<br />
+
 <details>
 <summary><b>click to expand(MoveCamera.cs)</b></summary>
 
@@ -347,6 +403,8 @@ orientation is a class within the Transform component.
 ```
 MoveCamera.cs is attached to CameraHolder.
 </details>
+
+<br />
 
 <details>
 <summary><b>click to expand(PlayerMovement.cs)</b></summary>
@@ -665,13 +723,17 @@ MoveCamera.cs is attached to CameraHolder.
 
 </details>
 
-<h4> Implemented features(2025/09/07):</h4>
+<br />
+
+**▌  Implemented features(2025/09/07):**
 
 - **Sliding on a slope**
 
-<h4> Core codes:</h4>
+<br />
 
-<h5> file structure:</h5>
+**▌  Core codes:**
+
+**·  file structure:**
 
 - Scene
     - Player
@@ -917,3 +979,5 @@ MoveCamera.cs is attached to CameraHolder.
     </div>
 
 </details>
+
+<br />
