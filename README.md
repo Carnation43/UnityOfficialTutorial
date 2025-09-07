@@ -1,4 +1,4 @@
-bb# UnityOfficialTutorial
+# UnityOfficialTutorial
 做游戏是我的梦想，即使困难重重。
 
 ## Unity Junior Programmer
@@ -296,7 +296,7 @@ When there is no **timer += 1;** the countdown will appear to end abruptly visua
 
 ### FIRST PERSON MOVEMENT
 
-#### Implemented features:
+#### Implemented features(2025/09/05):
 
 - **Rotate the camera** 
 - **Player movement, sprinting, jumping and crouching**
@@ -347,14 +347,14 @@ orientation is a class within the Transform component.
 MoveCamera.cs is attached to CameraHolder.
 </details>
 
-<detaisls>
+<details>
 <summary><b>click to expand(PlayerMovement.cs)</b></summary>
 
 <br />
 
 - **Variable Overview**
     ```csharp
-        [Header("Movement")]
+    [Header("Movement")]
     private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
@@ -571,7 +571,7 @@ MoveCamera.cs is attached to CameraHolder.
 
     <div align="center">
 
-    | After |
+    | Crouching |
     | :---: |
     | ![After](media/FirstPersonMovement/After/Crouching.jpg) |  
 
@@ -581,7 +581,7 @@ MoveCamera.cs is attached to CameraHolder.
 
     <div align="center">
 
-    | After |
+    | Crouching |
     | :---: |
     | ![After](media/FirstPersonMovement/After/Crouching.gif) |  
 
@@ -663,3 +663,256 @@ MoveCamera.cs is attached to CameraHolder.
     **exitingSlope** is to prevent the inability to jump on slopes. When the player jumps, set it to true; and set it to false in **ResetJump().**
 
 </details>
+
+#### Implemented features(2025/09/07):
+
+- **Sliding on a slope**
+
+#### Core codes:
+
+##### file structure:
+
+- Scene
+    - Player
+        - Orientation
+        - PlayerObj
+            - Capsule
+            - CameraPos
+    - CameraHolder
+        - Main Camera
+
+<detaisls>
+
+<summary><b>click to expand(Sliding.cs)</b></summary>
+
+- **Variable OverView**
+
+    ```csharp
+    [Header("References")]
+    public Transform orientation;
+    public Transform playerObj;
+    private Rigidbody rb;
+    private PlayerMovement pm;
+
+    [Header("Sliding")]
+    public float maxSlideTime;
+    public float slideForce;
+    private float slideTimer;
+
+    public float slideYScale;
+    private float startYScale;
+
+    [Header("Input")]
+    public KeyCode slideKey = KeyCode.LeftControl;
+    private float horizontalInput;
+    private float verticalInput;
+    ```
+
+- **How to implement:** It's similar to crouching, but the difference is that sliding is faster and a quicker action. If the player slides on a slope, we need to update codes to support it.
+
+    ```csharp
+
+    /**
+    *   Different behaviors of the ground and the slope
+    */
+
+    private void SlidingMovement() 
+    {
+        Vector3 inputDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+        // sliding on the ground
+        if(!pm.OnSlope() || rb.velocity.y > -0.1f)
+        {
+            // Debug.Log(rb.velocity.y);
+            rb.AddForce(inputDir.normalized * slideForce, ForceMode.Force);
+
+            slideTimer -= Time.deltaTime;
+        }
+
+        // sliding down a slope
+        else
+        {
+            rb.AddForce(pm.GetSlopeMoveDirection(inputDir) * slideForce, ForceMode.Force);
+        }
+
+        if (slideTimer <= 0)
+            StopSlide();
+    }
+
+    ```
+
+    **Achievement effect:**
+
+    | On The Ground | On The Slope |
+    | :---: | :---: |
+    | ![Before](media/FirstPersonMovement/After/SlidingOnTheGround.gif) | ![After](media/FirstPersonMovement/After/SlidingOnTheSlope.gif) |
+
+- **A Problem:** When the player who slides from the slope hits the ground, the speed jumps to walkSpeed instead of decreasing gradually. To solve it, we need to open PlayerMovement.cs and add some codes.
+
+    <div align="center">
+
+    | Problem |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/SlideProblem.gif) |  
+
+    </div>
+
+    ```csharp
+    /**
+    *   new variables in PlayerMovement.cs
+    */
+
+    public float slideSpeed;
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+
+    public float speedIncreaseMultiplier;
+    public float slopeIncreaseMultiplier;
+
+    /**
+    *   codes in StateHandler().
+    */
+
+    // Mode - Sliding
+    if (sliding)
+    {
+        state = MovementState.slideState;
+
+        if (OnSlope() && rb.velocity.y < 0.1f)
+        {
+            desiredMoveSpeed = slideSpeed;
+        }
+        else
+        {
+            desiredMoveSpeed = sprintSpeed;
+        }
+    }
+    ```
+
+    Use IEnumerator to decrese speed slowly.
+
+    ```csharp
+    /**
+    *   Addition to StateHandler()
+    */
+
+    // check if desiredMoveSpeed has changed drastically
+    if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
+    {
+        StopAllCoroutines();
+        StartCoroutine(SmoothlyLerpMoveSpeed());
+    }
+    else
+    {
+        moveSpeed = desiredMoveSpeed;
+    }
+
+    lastDesiredMoveSpeed = desiredMoveSpeed;
+
+    /**
+    *   SmoothlyLerpMoveSpeed()
+    */
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            if (OnSlope())
+            {
+       
+                float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                float slopeAngleIncrease = 1 + (slopeAngle / 90f);
+
+                time += Time.fixedDeltaTime * speedIncreaseMultiplier * slopeIncreaseMultiplier * slopeAngleIncrease;
+            }
+            else
+            {
+                time += Time.fixedDeltaTime * speedIncreaseMultiplier;
+            }
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+
+    }
+    ```
+
+    **Process:** 
+    - sprintSpeed = 9;
+
+    - slideSpeed = 30;
+
+    - speedIncreaseMultiplier = 2;
+
+    - slopeIncreaseMultiplier = 1.5;
+
+    - slopeAngle = 35°;
+
+    1. Start Sliding → enter **if (OnSlope() && rb.velocity.y < 0.1f)** → desiredMoveSpeed = 30 → enter **else {moveSpeed = desiredMoveSpeed;}** moveSpeed = 30; → lastDesiredMoveSpeed = 30; → last until hitting the ground. 
+    
+    2. Hitting ground → OnSlope() return false → desiredMoveSpeed = 9 && lastDesiredMoveSpeed = 30 → |30 - 9| = 21 > 4, enter **StartCoroutine(SmoothlyLerpMoveSpeed());** 
+
+    3. Start Coroutine → difference = 21 → enter Mathf.Lerp from 30 to 9 → if on the slope, accelerate; if hitting ground, deaccelerate. Checking every frame.
+
+    Notes: **StopAllCoroutines()** ensures that only one **SmoothlyLerpMoveSpeed()** is running in the meantime.
+
+    <br />
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | Problem |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/SlideNoProblem.gif) |  
+
+    </div>
+
+    **More Interesting:** Add a bouncy pad that impulses the player into the air.
+
+    ```csharp
+    /**
+    *   BouncyPad.cs
+    */
+
+    private void AddForce(Collider other)
+    {
+        if (other.GetComponentInParent<PlayerMovement>() != null)
+        {
+            pm = other.GetComponentInParent<PlayerMovement>();
+
+            Rigidbody rb = pm.GetComponent<Rigidbody>();
+
+            if (normalBoosting)
+                rb.AddForce(boostDirection.normalized * boostForce, ForceMode.Impulse);
+        }
+    }
+
+    // show the launch direction
+    private void OnDrawGizmosSelected()
+    {
+        if (!normalBoosting) return;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + boostDirection);
+    }
+    ```
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | BouncyPad |
+    | :---: |
+    | ![After](media/FirstPersonMovement/After/SlidingIntoPad.gif) |  
+
+    </div>
+
+</detaisls>
