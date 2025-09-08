@@ -350,6 +350,8 @@ When there is no **timer += 1;** the countdown will appear to end abruptly visua
 
 ### FIRST PERSON MOVEMENT
 
+#### Move | Sprint | Jump | Crouch
+
 **▌  Implemented features(2025/09/05):**
 
 - **Rotate the camera** 
@@ -727,6 +729,8 @@ MoveCamera.cs is attached to CameraHolder.
 
 <br />
 
+#### Slide
+
 **▌  Implemented features(2025/09/07):**
 
 - **Sliding on a slope**
@@ -984,9 +988,11 @@ MoveCamera.cs is attached to CameraHolder.
 
 <br />
 
+#### Pickup | Drop | Rotate | Throw an object
+
 **▌ Implemented features(2025/09/08):**
 
-- **Pick up, Drop, Rotate, Throw an item**
+- **Pick up, Drop, Rotate, Throw an object**
 
 <br />
 
