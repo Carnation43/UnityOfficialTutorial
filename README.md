@@ -983,3 +983,255 @@ MoveCamera.cs is attached to CameraHolder.
 </details>
 
 <br />
+
+**▌ Implemented features(2025/09/08):**
+
+- **Pick up, Drop, Rotate, Throw an item**
+
+<br />
+
+**▌  Core codes:**
+
+**·  file structure:**
+
+- Scene
+    - Player
+        - Orientation
+        - PlayerObj
+            - Capsule
+            - CameraPos
+    - CameraHolder
+        - Main Camera
+            - Hold Position
+            - pickupCam
+
+<details>
+<summary><b>Click to expand(ObjectsInteractive.cs)</b></summary>
+
+- **Variable OverView**
+
+    ```csharp
+    [Header("References")]
+    public Transform cam;                           // camera
+    public Transform holdPosition;                  
+    private GameObject holdObj;
+    private Rigidbody holdRb;
+    private CameraController cc;                    // use to get mouse sensitivity
+
+    [Header("Setting")]
+    private RaycastHit hitInfo;
+    private int layerNumber;
+
+    [Header("Grabbing")]
+    public KeyCode grabKey = KeyCode.F;
+    public float hitDistance;
+
+    [Header("Throwing")]
+    public KeyCode throwKey = KeyCode.Mouse0;
+    public float throwForce;
+
+    [Header("Rotating")]
+    public KeyCode rotateKey = KeyCode.R;
+    public float mouseSensitivityX;
+    public float mouseSensitivityY;
+    private float originalSensX;
+    private float originalSensY;
+
+    bool canDrop;
+    bool isGrabbed;
+    ```
+
+    <br />
+
+- **Pick and Drop**
+
+    ```csharp
+    /**
+    *   Part of the code.
+    */
+
+    private void GrabObject(GameObject pickUpObj)
+    {
+        holdObj = pickUpObj;                                 // assign holdObj to the object that was hit by the raycast
+        holdRb = pickUpObj.GetComponent<Rigidbody>();
+
+        holdRb.isKinematic = true;
+        // parent object to Hold Position to prevent the item from rotating along with the player's view - rotation
+        holdObj.transform.parent = holdPosition.transform;   
+
+        holdObj.layer = layerNumber;                         // change to the PickupLayer
+        isGrabbed = true;
+    }
+    ```
+
+    Using **Physics.Raycast()** and compare with the tag that was hit. The function of layerNumber is ensuring that held Object always display at the front. 
+
+    <div align="center">
+
+    | Problem |
+    | :---: |
+    | ![Problem](media/FirstPersonMovement/Before/Pickup.gif) | 
+
+    </div>
+
+    **Inspector Setting:** Add a pickupCamera → Change Render Type to Overlay → Culling Mask: PickupLayer → Main Camera: Stack: Select pickupCamera; Culling Mask: Deselect PickupLayer
+
+    <div align="center">
+
+    | Result |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/Pickup.gif) | 
+
+    </div>
+
+    When the player hold objects and look down, there may be collision problems. Just uncheck the PlayerLayer and the PickupLayer in Edit -> Project Settings... -> Physics -> Layer Collision Matrix
+
+    <br />
+
+    - **Pick up smoothly**
+
+    ```csharp
+    /**
+    *   MoveObject()
+    */
+
+    private void MoveObject()
+    {
+        float smoothSpeed = 0.1f;
+        Vector3 targetedPos = holdPosition.transform.position;
+        Vector3 smoothedPos = Vector3.Lerp(holdObj.transform.position, targetedPos, smoothSpeed);
+
+        holdObj.transform.position = smoothedPos;
+    }
+    ```
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | Pick up smoothly |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/PickupSmoothly.gif) | 
+
+    </div>
+
+    - **Throw is similar to Drop**
+
+    ```csharp
+
+    /**
+    *   ThrowObject()
+    */
+    private void ThrowObejct()
+    {
+        if (!holdObj) return;
+
+        holdRb.isKinematic = false;
+        holdObj.layer = 0;
+
+        holdRb.AddForce(cam.forward * throwForce, ForceMode.Impulse);
+
+        holdObj.transform.parent = null;
+        holdObj = null;
+        isGrabbed = false;
+        
+    }
+
+    ``` 
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | Throw |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/Throw.gif) | 
+
+    </div>
+
+    **Notes:** When the player throw an object, its high speed may cause it to pass through walls or the ground. Change the object's **Collision Detection** to **Continuous Dynamic**.
+
+
+<br />
+
+- **Rotate**
+
+    ```csharp
+
+    /**
+    *   RotateObject() Part of the code
+    */
+
+    // disable player rotating the camera
+    cc.sensX = 0f;
+    cc.sensY = 0f;
+
+    holdObj.transform.Rotate(Vector3.up, rotationX);
+    holdObj.transform.Rotate(Vector3.right, rotationY);
+
+    ```
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | Rotate |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/Rotate.gif) | 
+
+    </div>
+
+    **Notes:** Add a variable **canDrop** to prevent throwing or dropping while rotating the object. Otherwise, it may cause a problem.
+
+
+
+<br />
+
+- **A problem**
+
+    <div align="center">
+
+    | Inside the wall |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/Before/DropIntheWall.gif) | 
+
+    </div>
+
+    ```csharp
+
+    /**
+    *   StopClipping()  
+    */
+
+    private void StopClipping()
+    {
+        float clipRange = Vector3.Distance(holdObj.transform.position, cam.position); // distance from holdPos to the camera
+
+        // To detect how many colliders a ray passes through within a certain distance.
+        RaycastHit[] hits;
+        // return an array
+        hits = Physics.RaycastAll(cam.position, cam.transform.TransformDirection(Vector3.forward), clipRange);
+
+        if (hits.Length > 1)
+        {
+            holdObj.transform.position = cam.position + new Vector3(0, -0.5f, 0);
+        }
+    }
+
+    ```
+    <br />
+
+    **Explaination:** When the number of colliders a ray passes through is greater than 1, place the object 0.5 units below the camera, and call this logic from the Drop or Throw function.
+
+    <br />
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | Outside the wall |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/DropInTheWall.gif) | 
+
+    </div>
+</detais>
