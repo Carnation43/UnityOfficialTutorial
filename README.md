@@ -1240,4 +1240,134 @@ MoveCamera.cs is attached to CameraHolder.
     | ![Result](media/FirstPersonMovement/After/DropInTheWall.gif) | 
 
     </div>
-</detais>
+</details>
+
+<br />
+
+#### WallRunning
+
+**▌ Implemented features(2025/09/08):**
+
+- **WallRunning, WallJumping**
+- **Camera Tilt**
+
+<br />
+
+**▌ Core codes:**
+
+**· file structure:**
+
+- Scene
+    - Player
+        - Orientation
+        - PlayerObj
+            - Capsule
+            - CameraPos
+    - CameraHolder
+        - Main Camera
+            - Hold Position
+            - pickupCam
+
+<detils>
+<summary><b>Click to expand(WallRunning.cs)</b></summary>
+
+- **Variable OverView**
+
+    ```csharp
+    /**
+    *   Variables
+    */
+
+     [Header("Wallrunning")]
+    public LayerMask whatIsWall;
+    public LayerMask whatIsGround;
+    public float wallRunForce;
+    public float wallJumpUpForce;
+    public float wallJumpSideForce;
+    public float wallClimbSpeed; 
+    public float maxWallRunTime;
+    private float wallRunTimer;
+
+    [Header("Input")]
+    public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode upwardsRunKey = KeyCode.LeftShift;
+    public KeyCode downwardsRunKey = KeyCode.LeftControl;
+    private bool upwardsRunning;
+    private bool downwardsRunning;   
+    private float horizontalInput;
+    private float verticalInput;
+
+    [Header("Exiting")]
+    private bool exitingWall;
+    public float exitWallTime;
+    private float exitWallTimer;
+
+    [Header("Gravity")]
+    public bool useGravity;
+    public float gravityCounterForce;
+
+    [Header("Detection")]
+    public float wallCheckDistance;
+    public float minJumpHeight;
+    private RaycastHit leftWallhit;
+    private RaycastHit rightWallhit;
+    private bool wallLeft;
+    private bool wallRight;
+
+    [Header("Reference")]
+    public Transform orientation;
+    public CameraController cam;
+    private PlayerMovement pm;
+    private Rigidbody rb;
+    ```
+
+    **StartWallRun():** Set the wallRunTimer, set wallrunning in PlayerMovement to true, eliminate the Y-axis velocity, adjust the camera FOV value, and adjust the camera tilt angle.
+
+    **StopWallRun():** Restore the default values.
+
+    **WallRunningMovement():** Determine the forward direction by the cross product of the wall normal and transform.up.
+
+    ```csharp
+    /**
+    *   WallRunningMovement()
+    */
+    rb.useGravity = useGravity;
+   
+    Vector3 wallNormal = wallRight ? rightWallhit.normal : leftWallhit.normal;
+
+    Vector3 wallForward = Vector3.Cross(transform.up, wallNormal);
+
+    // ensure that the forward direction aligns with the direction the camera is facing.
+    if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+        wallForward = -wallForward;
+
+    // forward force
+    rb.AddForce(wallForward * wallRunForce, ForceMode.Force);
+
+    // up/down force
+    if (upwardsRunning)
+        rb.velocity = new Vector3(rb.velocity.x, wallClimbSpeed, rb.velocity.z);
+    if (downwardsRunning)
+        rb.velocity = new Vector3(rb.velocity.x, -wallClimbSpeed, rb.velocity.z);
+
+    // push to wall force, handling the convex surface.
+    if(!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+        rb.AddForce(-wallForward * 100, ForceMode.Force);
+
+    // weaken gravity
+    if (useGravity)
+        rb.AddForce(transform.up * gravityCounterForce, ForceMode.Force);
+    ```
+
+    <br />
+
+    **Achievement effect**
+
+    <div align="center">
+
+    | WallRunning |
+    | :---: |
+    | ![Result](media/FirstPersonMovement/After/WallRunning.gif) | 
+
+    </div>
+
