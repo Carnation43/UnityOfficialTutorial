@@ -1,15 +1,62 @@
-# UnityOfficialTutorial
+# UnityOfficialTutorial(Updating...)
+
 做游戏是我的梦想，即使困难重重。
 
-## Unity Junior Programmer
+Life endures, games persist.
 
 **💬学习知识汇总**
 
-第一章：主/副摄像机切换 | 车轮碰撞体 | 简单控制 | 视角跟随 💨 [PlayerContoller.cs](Prototype%201/Assets/Scripts/PlayerController.cs)
+<b>第一章：主/副摄像机切换 | 车轮碰撞体 | 简单控制 | 视角跟随 💨 [PlayerContoller.cs](Prototype%201/Assets/Scripts/PlayerController.cs)</b>
 
 <br />
 
-第二章：[单例设计模式](#p2k1)
+<b>第二章：[单例设计模式](#p2k1) | [对象池原理](#p2k2) | 简单UI | 随机生成 💨 [相关代码](Prototype%202/Assets/Scripts)</b>
+
+<br />
+
+<b>第三章：[GetComponent原生存储+双路径优化](#p3k1) | 简单粒子 | 简单音效 | 简单动画 💨 [PlayerContoller.cs](Prototype%203/Assets/Scripts/PlayerController.cs)</b>
+
+<br />
+
+<b>第四章：[协程用法与原理](#p4k1) | [欧拉角(万向死锁)](#p4k2) | 视角旋转 | 敌人追踪 | 多轮进攻 | 强化物品闪烁 💨 [GameManager.cs](Prototype%204/Assets/Scripts/SpawnManager.cs)</b>
+
+<br />
+
+<b>第五章：[UGUI渲染逻辑(DrawCall)](#p5k1) | 重启游戏 | 分数显示 | 计时器 💨 [GameManager.cs](Prototype%205/Assets/Challenge%205/Scripts/GameManagerX.cs)</b>
+
+<br />
+
+<b>第一人称控制器：[视角控制](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Camera/CameraController.cs) | [基本输入控制(移动，跳跃，蹲伏)](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/PlayerMovement.cs) | [滑行](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Sliding.cs) | [贴墙跑](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/WallRunning.cs) | [物品交互](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/ObjectsInteractive.cs)</b>
+
+<hr />
+
+**💬Learning Knowledge Summary**
+
+<b>Chapter 1: Main/Secondary Camera Switching | Wheel Collider | Simple Control | Camera Following 💨 [PlayerContoller.cs](Prototype%201/Assets/Scripts/PlayerController.cs)</b>
+
+<br />
+
+<b>Chapter 2: [Singleton Design Pattern](#p2k1) | [Object Pool Principle](#p2k2) | Simple UI | Random Spawning 💨 [Relevant Codes](Prototype%202/Assets/Scripts)</b>
+
+<br />
+
+<b>Chapter 3: [GetComponent Native Storage + Dual-Path Optimization](#p3k1) | Simple Particles | Simple Sound Effects | Simple Animations 💨 [PlayerContoller.cs](Prototype%203/Assets/Scripts/PlayerController.cs)</b>
+
+<br />
+
+<b>Chapter 4: [Coroutine Usage and Principle](#p4k1) | [Euler Angles (Gimbal Lock)](#p4k2) | Camera Rotation | Enemy Tracking | Multi-Round Attack | Power-Up Item Blinking 💨 [GameManager.cs](Prototype%204/Assets/Scripts/SpawnManager.cs)</b>
+
+<br />
+
+<b>Chapter 5: [UGUI Rendering Logic (DrawCall)](#p5k1) | Game Restart | Score Display | Timer 💨 [GameManager.cs](Prototype%205/Assets/Challenge%205/Scripts/GameManagerX.cs)</b>
+
+<br />
+
+<b>First-Person Controller: [Camera Control](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Camera/CameraController.cs) | [Basic Input Control (Movement, Jumping, Crouching)](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/PlayerMovement.cs) | [Sliding](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Sliding.cs) | [Wall Running](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/WallRunning.cs) | [Object Interaction](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/ObjectsInteractive.cs)</b>
+
+<br />
+
+## Unity Junior Programmer
 
 ### Prototype 1
 
@@ -85,7 +132,7 @@ In games, certain core manager classes(like GameManager, UI Manager, AudioManage
 <br />
 
 <details>
-<summary><b>Object Pooling</b></summary>
+<summary><b><span id="p2k2">Object Pooling</span></b></summary>
 
 <b style="font-size: 18px"> I.  The Underlying Coorelation Between Objects and Memory </b> 
 **At the software level, "object creation/destruction" essentially corresponds to "memory allocation/reclamation" operations at the hardware level.**
@@ -174,7 +221,7 @@ Applies continuous acceleration. Best for simulating mass-agnostic acceleration,
 <br />
 
 <details>
-<summary><b>GetComponent<<b<>>()</b></summary>
+<summary><b><span id="p3k1">GetComponent<<b<span>>()</span></b></summary>
 
 All components attached to a GameObject are stored in a tightly packed, linear array within the native(C++) memory managed by the Unity engine.<i>[The core part of the Unity engine is written in C++, which directly manages the computer's "native memory"].</i>
 
@@ -214,7 +261,7 @@ Unity does not use the naive approach for every call. It employs optimizations. 
 
 **▌ Knowledge point:**
 <details>
-<summary><b>Coroutine</b></summary>
+<summary><b><span id="p4k1">Coroutine</span></b></summary>
 Coroutines in Unity are specialized functions that can pause execution at specific points and resume later, making theme ideal for handling phased logic or delayed actions.
 
 1. **The Nature of Coroutines: Iterator-Based State Machines**
@@ -269,6 +316,37 @@ Coroutines in Unity are specialized functions that can pause execution at specif
 
 <br />
 
+<details>
+<summary><b><span id="p4k2">EulerAngleGimbalLock</span></b></summary>
+
+When one of the three rotation axes of an object (usually corresponding to the X, Y, and Z axes, namely Pitch, Yaw, and Roll) rotates to 90°, it causes the rotation directions of the other two axes to coincide, resulting in the loss of one rotational degree of freedom and ultimately making the rotation behavior unpredictable.
+
+Euler angles represent "sequential rotations" rather than "transformations". In Unity, the default order is Z→X→Y. When the middle axis is rotated to 90 degrees, the first and last axes will point in the same direction, resulting in gimbal lock.
+
+Because the total rotation matrix of Euler angles = the product of the rotation matrices of the three axes (matrix multiplication does not satisfy the commutative law).
+
+<br />
+
+- **Display**
+
+Blue and Green axes point in the same direction.
+
+<div align="center">
+
+| Display |
+| :---: |
+| ![After](media/GimbalLock.gif) |  
+
+</div>
+
+- **Quaternion**
+
+    Compared with Euler angles, where each rotation starts from the initial angle of the object and then proceeds in the order of Y→X→Z angles, quaternions continue to rotate based on the currently rotated angle, which is a transformation rather than a sequential rotation.
+
+</details>
+
+<br />
+
 **▌ Notes:**
 
 ▲ The Line **Vector3 lookDirection = (player.transform.position - transform.position).normalized;** shows that using vector subtraction to calculate the direction vector between two objects (enemy and player) gives a vector that contains not only directional information but also has a length(magnitude) representing the straight-line distance betweeen the two objects.
@@ -284,16 +362,17 @@ Coroutines in Unity are specialized functions that can pause execution at specif
 <br />
 
 **▌ Display:**
-<div style="display: flex; justify-content: center; align-items: center">
-<img src="media/Prototype_5.gif" alt="示例图01">
-</div>
+
+| Prototype 5 | Challenge 5 |
+| :---: | :---: |
+| ![Before](media/Prototype_5.gif) | ![After](media/Challenge_5.gif) |
 
 <br />
 
 **▌ Knowledge point:**
 
 <details>
-<summary><b>The rendering logic of UGUI</b></summary>
+<summary><b><span id="p5k1">The rendering logic of UGUI</span></b></summary>
 
 1. **Core Three-tier Framework**
 
@@ -1276,7 +1355,7 @@ MoveCamera.cs is attached to CameraHolder.
             - Hold Position
             - pickupCam
 
-<detils>
+<details>
 <summary><b>Click to expand(WallRunning.cs)</b></summary>
 
 - **Variable OverView**
