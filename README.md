@@ -3,6 +3,14 @@
 
 ## Unity Junior Programmer
 
+**💬学习知识汇总**
+
+第一章：主/副摄像机切换 | 车轮碰撞体 | 简单控制 | 视角跟随 💨 [PlayerContoller.cs](Prototype%201/Assets/Scripts/PlayerController.cs)
+
+<br />
+
+第二章：[单例设计模式](#p2k1)
+
 ### Prototype 1
 
 **▌ Features:**
@@ -56,7 +64,7 @@ Its main uses include:
 **▌ Knowledge point:**
 
 <details>
-<summary><b>Singleton Pattern Introduction</b></summary>
+<summary><b><span id="p2k1">Singleton Pattern Introduction</span></b></summary>
 
 The line **public static GameManager Instance;** in GameManager.cs &nbsp;is a common implementation of the **Singleton Pattern（单例模式）** in game development.
 
