@@ -56,7 +56,7 @@ Life endures, games persist.
 
 <br />
 
-## Unity Junior Programmer
+## Unity Junior Programmer (Completed !)
 
 ### Prototype 1
 
@@ -433,7 +433,7 @@ When there is no **timer += 1;** the countdown will appear to end abruptly visua
 
 <br />
 
-## Tutorials on Youtube
+## Tutorials on Youtube (Updating ...)
 
 ### FIRST PERSON MOVEMENT
 
@@ -1458,3 +1458,66 @@ MoveCamera.cs is attached to CameraHolder.
 
     </div>
 
+</details>
+
+<br />
+
+## UI Demo (Updating ...)
+
+### Chapter 1
+
+**▌ Knowledge point:**
+
+- **Unity Optimize UI: Reduce Draw Calls**
+
+    - **What Draw Call is?**
+
+        DrawCall is a core instruction sent by the CPU to the GPU, used to command the GPU to execute a specific "drawing task" —— simply put, it is the CPU telling the GPU: "Please use these resources (such as models, textures, shaders) to draw something on the screen." 
+
+        In Unity, we can open **Frame Debugger** window to view how many Draw Calls have been generated.
+
+    <div align="center">
+
+    | Draw Calls |
+    | :---: |
+    | ![Result](media/UIDemo/DrawCallCounts.jpg) | 
+
+    </div>
+
+    - **How to reduce Draw Calls?**
+
+        In Unity, the core premise for reducing DrawCalls is to make multiple objects meet the condition of "being mergeable for rendering"(e.g., different materials, differnet textures)
+
+        So we can create a **Sprite Altas** and pack the same sprites.
+
+        <div align="center">
+
+        | Draw Calls Optimization |
+        | :---: |
+        | ![Result](media/UIDemo/Optimization.jpg) | 
+
+        </div>
+
+        As we can see, we successfully reduce draw call counts from 38 to 6.
+        
+        In **Analysis Profiler**, we can find out **Batch Breaking Reason** to track where else optimization can futher be down.
+
+        <div align="center">
+
+        | Batch Breaking Reason |
+        | :---: |
+        | ![Result](media/UIDemo/Analysis.jpg) | 
+
+        </div>
+
+    - **Another tip for optimization**
+
+    Using **Crunch Compression** can decrease the size of our builds.
+
+    <div align="center">
+
+    | Before | After |
+    | :---: | :---: |
+    | ![Result](media/UIDemo/Before.jpg) | ![Result](media/UIDemo/After.jpg) | 
+
+    </div>
