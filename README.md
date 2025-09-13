@@ -28,6 +28,8 @@ Life endures, games persist.
 
 <b>第一人称控制器：[视角控制](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Camera/CameraController.cs) | [基本输入控制(移动，跳跃，蹲伏)](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/PlayerMovement.cs) | [滑行](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Sliding.cs) | [贴墙跑](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/WallRunning.cs) | [物品交互](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/ObjectsInteractive.cs)</b>
 
+<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2)</b>
+
 <hr />
 
 **💬Learning Knowledge Summary**
@@ -55,6 +57,8 @@ Life endures, games persist.
 <b>First-Person Controller: [Camera Control](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Camera/CameraController.cs) | [Basic Input Control (Movement, Jumping, Crouching)](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/PlayerMovement.cs) | [Sliding](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Sliding.cs) | [Wall Running](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/WallRunning.cs) | [Object Interaction](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/ObjectsInteractive.cs)</b>
 
 <br />
+
+<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2)</b>
 
 ## Unity Junior Programmer (Completed !)
 
@@ -1468,7 +1472,7 @@ MoveCamera.cs is attached to CameraHolder.
 
 **▌ Knowledge point:**
 
-- **Unity Optimize UI: Reduce Draw Calls**
+- <span id="ui1">**Unity Optimize UI: Reduce Draw Calls**</span>
 
     - **What Draw Call is?**
 
@@ -1521,3 +1525,63 @@ MoveCamera.cs is attached to CameraHolder.
     | ![Result](media/UIDemo/Before.jpg) | ![Result](media/UIDemo/After.jpg) | 
 
     </div>
+
+
+### Chapter 2
+
+**▌ Knowledge point:**
+
+- <span id="ui2">**Responsive UI**</span>
+
+    - **Canvas Scaler Component:** It determines how the UI system scales overall according to the screen size and serves as the "ruler" for the adaptation of all UI elements. Without this benchmark, the size and position of UI elements will lose a unified reference standard, and subsequent layout adjustments will become chaotic.
+
+        - Screen Match Mode —— Width: usually used in mobile games.
+        - Screen Match Mode —— Height: usually used in PC games. 
+
+    - **Rect Transform:** Control the relative position of UI elements and their parent containers through anchor points.
+
+        - Anchors(White cross): Anchors are "connection points" between UI elements and their parent container, determining how the elements' position and size adapt when the parent container changes size.
+
+        <div align="center">
+
+        | Anchors |
+        | :---: |
+        | ![Result](media/UIDemo/Anchors.gif) | 
+
+        </div>
+
+        - Pivot(Blue circle): The pivot point is the UI element's own "center point," which determines the reference point for the element's rotation and scaling, as well as the origin for calculating its position coordinates.
+
+        <div align="center">
+
+        | Pivot |
+        | :---: |
+        | ![Result](media/UIDemo/Pivot.gif) | 
+
+        </div>
+
+        Using Anchor Presets to quickly adjust UI Elements.
+
+    - **Horizontal/Vertical Layout Group:** 
+    
+        - **Control Child Size:** It controls whether the layout group is allowed to modify the size of child elements. 
+
+        <div align="center">
+
+        | Layout Groups |
+        | :---: |
+        | ![Result](media/UIDemo/LayoutGroup.gif) | 
+
+        </div>
+
+        - **Child Force Expand:** It forces child elements to stretch to fill the remaining space of the parent container.
+
+    - **Grid Layout Group:**
+        
+        Automatically arrange all child elements according to specified row and column rules to form a uniformly distributed grid. Usually used in game backpacks, item bars.
+
+### Chapter 3
+
+**▌ Knowledge point:**
+
+- 
