@@ -28,7 +28,9 @@ Life endures, games persist.
 
 <b>第一人称控制器：[视角控制](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Camera/CameraController.cs) | [基本输入控制(移动，跳跃，蹲伏)](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/PlayerMovement.cs) | [滑行](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/Sliding.cs) | [贴墙跑](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/WallRunning.cs) | [物品交互](FIRST%20PERSON%20MOVEMENT/Assets/Scripts/ObjectsInteractive.cs)</b>
 
-<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2)</b>
+<br />
+
+<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween插件](#ui3)</b>
 
 <hr />
 
@@ -58,7 +60,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2)</b>
+<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2) | [LeanTween Plugin](#ui3)</b>
 
 ## Unity Junior Programmer (Completed !)
 
@@ -1584,4 +1586,62 @@ MoveCamera.cs is attached to CameraHolder.
 
 **▌ Knowledge point:**
 
-- 
+- <span id="ui3">**LeanTween Plugin**</span>
+
+    - **Application:**
+
+        1. Easing Function
+        ```csharp
+        /**
+        *   Ease In Out
+        */
+
+        public LeanTweenType leanTweenType;
+
+        void EaseFunction()
+        {
+            // Vector3 newPos
+            transform.LeanMoveLocal(newPos, speed).setEase(leanTweenType);
+        }
+        ```
+
+        2. Pop-ups
+        ```csharp
+        /**
+        *   Popup and semi-transparent black background
+        */
+        private void OnEnable()
+        {
+            content.localScale = Vector3.zero;
+            content.LeanScale(Vector3.one, 0.5f).setEaseOutBack();
+
+            darkCanvasGroup.alpha = 0;
+            darkCanvasGroup.LeanAlpha(1f, 0.5f);
+        }
+
+        public void OnClose()
+        {
+            content.LeanScale(Vector3.zero, 0.5f).setEaseInBack().setOnComplete(() =>
+            {
+                gameObject.SetActive(false);
+            });
+            darkCanvasGroup.LeanAlpha(0, 0.5f);
+        }
+        ```
+
+        Morever, **Canvas Group** batch manages the visibility and interactivity of a group of UI elements.
+
+        3. Slider
+        ```csharp
+        /**
+        *   Another way to use LeanTween
+        */
+        LeanTween.value(gameObject, startValue, newValue, 1f).setOnUpdate((float val) =>
+        {
+            slider.value = val;
+        }).setEaseInElastic();
+        ```
+
+### Chapter 4
+
+**▌ Knowledge point:**
