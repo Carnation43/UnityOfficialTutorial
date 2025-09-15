@@ -1586,7 +1586,7 @@ MoveCamera.cs is attached to CameraHolder.
 
 **▌ Knowledge point:**
 
-- <span id="ui3">**LeanTween Plugin**</span>
+- <span id="ui3">**LeanTween Plugin —— Animation Based on Code**</span>
 
     - **Application:**
 
@@ -1642,6 +1642,61 @@ MoveCamera.cs is attached to CameraHolder.
         }).setEaseInElastic();
         ```
 
+        4. Animation Scripted Sequence (DoTween)
+        ```csharp
+        private void StartAnimationSeq()
+        {
+            // logo.localScale = Vector3.zero;
+            logoCanvasGroup.alpha = 0;
+            presentCanvasGroup.alpha = 0;
+            present.localScale = Vector3.zero;
+
+            var seq1 = DOTween.Sequence();
+
+            // 1.display logo
+            // seq.append(logo.LeanScale(Vector3.one, 1f).setEaseInExpo());
+            // seq1.append(logoCanvasGroup.LeanAlpha(1, 0.5f));
+
+            seq1.Append(logoCanvasGroup.DOFade(1, 0.5f));
+
+            seq1.AppendInterval(2.0f);
+
+            // 2.hide logo and show text
+            seq1.Append(present.DOScale(Vector3.one, 1f).SetEase(Ease.OutCubic));
+            seq1.Join(presentCanvasGroup.DOFade(1, 0.5f));
+            seq1.Join(logoCanvasGroup.DOFade(0, 0.5f).SetEase(Ease.OutCubic));
+
+            seq1.AppendInterval(2.0f);
+            
+            // 3.hide text and start game
+            seq1.Append(bottom.DOLocalMoveY(-1200, 1f).OnStart(() => { Debug.Log("Starting Frame： " + Time.frameCount); }));
+            seq1.Join(top.DOLocalMoveY(1200, 1f).OnStart(() => { Debug.Log("Starting Frame： " + Time.frameCount); }));
+            seq1.Join(presentCanvasGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic));
+
+            seq1.OnComplete(StopAnimationSeq);
+        }
+        ```
+
 ### Chapter 4
 
 **▌ Knowledge point:**
+
+- Animation —— Based on Animator
+
+    - **Animator Component:**
+
+        1. Associate and load the Animator Controller
+            
+        2. Drive the playing, pausing and switching of Animation Clips
+
+        3. Handle the interaction logic between animation parameters (Parameters) and the state machine.
+
+        - Parameters: **Controller** specify the associated Animator Controller asset; 
+        **Avatsr** specify skeleton mapping for designated characters; 
+        **Apply Root Motion** Checked: The displacement/rotation contained in the animation itself will drive the object to move.
+        Unchecked: The object movement needs to be controlled by scripts to avoid conflicts;
+        **Culling Mode** Always Animate: Always play animations (default)
+        Cull Update Transforms: Stop updating position when the object is invisible (performance optimization)
+        Cull Completely: Completely stop animations when the object is invisible (maximum optimization, suitable for distant objects)
+
+### Chapter 5 —— Map
