@@ -30,7 +30,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween插件](#ui3)</b>
+<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween/DoTween插件](#ui3) | [Animator](#ui4) | [地图设计](#ui5)</b>
 
 <hr />
 
@@ -60,7 +60,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2) | [LeanTween Plugin](#ui3)</b>
+<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2) | [LeanTween/DoTween Plugin](#ui3) | [Animator](#ui4) | [Map Design](#ui5)</b>
 
 ## Unity Junior Programmer (Completed !)
 
@@ -1681,7 +1681,7 @@ MoveCamera.cs is attached to CameraHolder.
 
 **▌ Knowledge point:**
 
-- Animation —— Based on Animator
+- <span id="ui4">**Animation —— Based on Animator**</span>
 
     - **Animator Component:**
 
@@ -1699,4 +1699,85 @@ MoveCamera.cs is attached to CameraHolder.
         Cull Update Transforms: Stop updating position when the object is invisible (performance optimization)
         Cull Completely: Completely stop animations when the object is invisible (maximum optimization, suitable for distant objects)
 
-### Chapter 5 —— Map
+### Chapter 5 —— Map Interface (Updating...)
+
+- <span id="ui5">**Preparation work:**</span>
+    1. Map Generator: https://azgaar.github.io/Fantasy-Map-Generator/
+    2. Google Fonts: https://fonts.google.com/
+
+- **Some records:**
+    - **Partial file structure:**
+        - Scroll View(Scroll Rect)
+            - Viewport(Rect Mask 2D)
+                - MapImage
+
+    - **Scroll Rect component:** Use the Scroll Rect component to move the map. The Content must be a child object of the Viewport, and its size (width/height) is usually larger than that of the Viewport (otherwise, scrolling is unnecessary). The Viewport defines the area visible to the user, typically a rectangular area with a Mask component (it can also be without one, but having a Mask can clip the content beyond the viewport).
+
+    - **Map display text function：** 
+
+        1. Tooltip display
+        ```csharp
+        /**
+        *   Control alpha values to show information
+        */
+        public void ShowTooltip(Transform sourceTransform, string landmarkName)
+        {
+            transform.position = sourceTransform.position;
+            text.text = landmarkName;
+            canvasGroup.alpha = 1;
+        }
+        ```
+
+        The problem that has arisen: The pop-up text will block raycaster and cause the MouseExit function to be triggered.
+
+        <div align="center">
+
+        | Problem |
+        | :---: |
+        | ![Result](media/UIDemo/MosueEnterBefore.gif) | 
+
+        </div>
+
+        Just uncheck Blocks Raycasts in TextMeshPro.
+
+        2. Player-defined pin and motion blur effects
+        ```csharp
+        /**
+        *   自定义坐标
+        */
+        // mapPointsContainer是存储玩家自定义坐标的容器
+        GameObject newMapPointer = Instantiate(mapPointPrefab, mapPointsContainer.transform);
+        // 从天而降
+        newMapPointer.transform.localPosition = localClickPosition + new Vector2(0, 400);
+        newMapPointer.transform.DOLocalMoveY(localClickPosition.y, 1.5f).
+        SetEase(Ease.OutBounce).
+        OnUpdate(() => {...}).
+        OnComplete(() => {...})
+        ```
+
+        The problem that has arisen: When generating pin, quickly moving to another pin will cause the currently executing animation to stop. This is because the line **animationId = transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutExpo).intId;** will accidentally cause DOTween.Kill(animationId) to stop other running animations. Therefore, it is better to use the method **animationTween = transform.DOScale(Vector3.one, 0.5f).SetEase(Ease.OutExpo);** to save the animation instance to a variable, allowing for more precise control of the current animation. intId returns value -999 because the anmiation has been stopped or destroyed.
+
+        <div align="center">
+
+        | Dropping but not stopping |
+        | :---: |
+        | ![Result](media/UIDemo/Animation.gif) | 
+
+        </div>
+
+        The trailing shadow effect can refer to this cs file.[PinManager.cs](MapInterface/Assets/Scripts/PinManager.cs), It creates an identical object at the current position of the pin at regular intervals, except that the color is black and translucent. It can be replaced by a **trail renderer** component.
+
+        3. Filter menu
+        Use toggle components to set active icons on the map
+
+        <div align="center">
+
+        | Filter Panel |
+        | :---: |
+        | ![Result](media/UIDemo/Filter.gif) | 
+
+        </div>
+
+
+### Chapter 6 —— Inventory System
+
