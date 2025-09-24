@@ -30,7 +30,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween/DoTween插件](#ui3) | [Animator](#ui4) | [地图设计](#ui5)</b>
+<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween/DoTween插件](#ui3) | [Animator](#ui4) | [地图设计](#ui5) | [背包系统](ui#6)</b> 
 
 <hr />
 
@@ -60,7 +60,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2) | [LeanTween/DoTween Plugin](#ui3) | [Animator](#ui4) | [Map Design](#ui5)</b>
+<b>UI：[Simple Optimization of DrawCall](#ui1) | [Responsive UI](#ui2) | [LeanTween/DoTween Plugin](#ui3) | [Animator](#ui4) | [Map Design](#ui5) | [InventorySystem](#ui6)</b>
 
 ## Unity Junior Programmer (Completed !)
 
@@ -1779,5 +1779,94 @@ MoveCamera.cs is attached to CameraHolder.
         </div>
 
 
-### Chapter 6 —— Inventory System
+### <span id="ui6">Chapter 6 —— Inventory System (Updating...)</span>
 
+<details>
+<summary>Assets and tools</summary>
+
+- Sources of Assets: 
+    1. https://kenney.nl/
+    2. https://gitee.com/bytebomb/hollow-knight-resource
+
+- tools: 
+    1. Figma (UI design)
+    2. Photopea
+    3. 即梦AI、豆包AI (2D assets generation)
+    4. ComfyUI workflow (Remove Background)
+
+</details>
+
+- Inventory System Interface Design
+
+    <div align="center">
+
+    | Inventory |
+    | :---: |
+    | ![Result](media/InventorySystem/Backpack.jpg) | 
+
+    </div>
+
+- **Scripts**
+
+    - OverView
+        - Menu Manager
+            1. **MenuController.cs:** This is the central controller for the inventory menu UI. It is a singleton that manages the opening/closing of the menu, the dynamic creation/destruction of inventory slots, and the filtering of items by category. It subscribes to InventoryManager events to update the UI when items are added or removed. It also handles navigation input through the InventoryNavigationHandler and tab navigation through the TabsManager.
+
+        - Animation
+            1. **BaseIconAnimationController.cs:** This is an abstract base class for UI icon animations. It uses DOTween to handle common animation logic for OnPointerEnter, OnPointerExit, and OnDeselect events, including scaling and fade-in/fade-out effects. It also manages the selected state and isPointerVisible based on cursor visibility.
+            2. **EquipmentsIconAnimationController.cs:** This class inherits from BaseIconAnimationController and provides specific animations for equipment icons when they are selected. It makes the icon larger and continuously rotates its background image. When deselected, it reverts these animations.
+            3. **ItemsIconAnimationController.cs:** This class inherits from BaseIconAnimationController and provides specific animations for regular item icons when they are selected. It uses DOTween to scale the icon and make it "wiggle" left and right. It also updates MenuController with LastItemSelected and LastSelectedIndex.
+
+        - SlotUI
+            1. **InventoryManager.cs:** This is a singleton class used to manage the player's inventory. It contains a list of InventorySlot objects. It provides methods to AddItem and RemoveItem from the inventory and handles stacking of stackable items. It also defines OnItemAdded and OnItemRemoved events that other scripts can subscribe to for inventory updates.
+            2. **InventorySlot.cs:** A simple class representing a slot in the inventory. It contains an Item object and an integer count for stackable items.
+            3. **InventorySlotUI.cs:** This script manages the visual representation of inventory slots in the UI. It displays the item's icon and stack count (if the item is stackable and the count is greater than 1). It has an Initialize method to set up the slot's display based on an InventorySlot object.
+            4. **InventoryNavigationHandler.cs:** This script uses input from UserInput.MoveInput to handle navigation in the inventory UI. It calculates the next selected item based on directional input (up, down, left, right) and updates EventSystem.current.SetSelectedGameObject. It uses GridLayoutGroupHelper.cs to understand the grid layout for navigation.
+
+        - Tab Filter
+            1. **TabsManager.cs:** Manages a collection of Tab objects. It handles tab selection, animation of the selection background, and navigation between tabs using directional input. When a tab is selected, it also invokes a UnityEvent and passes the index of the selected tab.
+            2. **Tab.cs:** Represents a single tab in a tabbed UI system. It changes its icon color on OnSelect and OnDeselect, and notifies its TabsManager when clicked.
+
+        - Item dropping and picking up
+            1. **ItemDrop.cs:** This script is responsible for items that can be picked up in the game. It randomly selects an Item from a predefined array, displays its sprite, and when clicked (OnMouseDown), adds the item to the InventoryManager and destroys itself.
+            2. **Ghost.cs:** This script is attached to a "Ghost" object. When clicked (OnMouseDown), it triggers a "Hit" animation, instantiates an itemPrefab at its position, and applies random force and torque to its Rigidbody2D to simulate item dropping.
+            3. **Item.cs** This script is inherited from Scriptable.cs. It used to create and manage various item attributes in the game.
+
+        - UserInput
+            1. **CursorVisibility.cs:** This script manages the visibility and locked state of the mouse cursor. It hides the cursor when the menu is open and the user navigates using keyboard/controller input; it shows the cursor when the mouse moves. It subscribes to UserInput.OnMouseMovedAction to detect mouse movement.
+            2. **UserInput.cs:** This script captures player input using Unity's new input system. It provides static MoveInput and MousePos properties for access by other scripts. It also defines an OnMouseMovedAction event, which is triggered when the mouse position changes.
+
+        - External Scripts
+            1. **GridLayoutGroupHelper.cs:** This static helper class extends GridLayoutGroup and provides a Size method. This method calculates the Vector2Int size (columns and rows) of the GridLayoutGroup based on the constraint and the number of child elements. This is particularly useful for determining the layout of inventory slots.
+            2. **UIScrollToSelection.cs:** This script automatically scrolls a ScrollRect to keep the currently selected UI element in view. It supports vertical, horizontal, or bidirectional scrolling and can be configured to cancel automatic scrolling on user input.
+
+        
+    - Item dropping and picking up [Item.cs](InventorySystemScripts/Item.cs)
+    
+        **[CreateAssetMenu(fileName = "New item", menuName = "ScriptableObjects/Item")]** creates scriptable gameobjects.
+
+        [ItemDrop.cs](InventorySystemScripts/ItemDrop.cs) initializes different items by changing sprite, Item addition is managed through the InventoryManager.cs singleton.
+
+    - **[InventoryManager.cs](InventorySystemScripts/InventoryManager.cs)**
+        - Delegates(委托)
+            When defining a delegate, such as public delegate void InventoryChanged();, the compiler compiles the delegate type into a class as follows:
+            ```csharp
+            public class InventoryChanged: System.MulticastDelegate
+            {
+                public InventoryChanged(Object object, IntPtr method);
+        
+                public virtual Void Invoke(int32 parm);
+        
+                public virtual IAsyncResult BeginInvoke(Int32 parm, AsyncCallback callback, Object object );
+        
+                public virtual void EndInvoke(IAsyncResult result);
+            }
+            ```
+            This class inherits from the Systme.MulticastDelegate type defined in FCL. All delegate types are derived from MulticastDelegate. This class also defines four methods: a constructor, the Invoke method, and two asynchronous methods, BeginInvoke and EndInvoke.
+            Delegates have the characteristics of type safety, multicasting capability, and object orientation.
+            Delegates are the basis of Events.
+
+            Application: [Delegate](other/Program.cs)
+
+        - Events(事件)
+            An event is the encapsulation and protection of a delegate.
