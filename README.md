@@ -30,7 +30,7 @@ Life endures, games persist.
 
 <br />
 
-<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween/DoTween插件](#ui3) | [Animator](#ui4) | [地图设计](#ui5) | [背包系统](ui#6)</b> 
+<b>UI：[DrawCall简单优化](#ui1) | [响应式UI](#ui2) | [LeanTween/DoTween插件](#ui3) | [Animator](#ui4) | [地图设计](#ui5) | [背包系统](#ui6)</b> 
 
 <hr />
 
@@ -1869,4 +1869,172 @@ MoveCamera.cs is attached to CameraHolder.
             Application: [Delegate](other/Program.cs)
 
         - Events(事件)
-            An event is the encapsulation and protection of a delegate.
+            1. The owner of the event and the responder to the event are two completely different objects.
+                <details>
+                <summary>expand to view code</summary>
+
+                ```csharp
+                
+                using System;
+                using System.Timers;
+
+                namespace Delegate
+                {
+                    class Program
+                    {
+                        static void Main(string[] args)
+                        {
+                            Timer timer = new Timer();
+                            timer.Interval = 1000;
+                            Boy boy = new Boy();
+                            Girl girl = new Girl();
+                            timer.Elapsed += boy.Action;
+                            timer.Elapsed += girl.Action;
+                            timer.Start();
+                            Console.ReadLine();
+                        }
+                    }
+
+                    class Boy
+                    {
+                        internal void Action(object sender, ElapsedEventArgs e)
+                        {
+                            Console.WriteLine("Jump");
+                        }
+                    }
+
+                    class Girl
+                    {
+                        internal void Action(object sender, ElapsedEventArgs e)
+                        {
+                            Console.WriteLine("Sing");
+                        }
+                    }
+                }
+
+                ```
+                </details>
+
+            2. The owner of the event and the responder to the event are the same object.
+
+                <details>
+                <summary>expand to view code</summary>
+
+                ```csharp
+                using System;
+                using System.Windows.Forms;
+
+                namespace Delegate2
+                {
+                    static class Program
+                    {
+                        static void Main()
+                        {
+                            Form form = new Form();
+                            Controller controller = new Controller(form);
+                            form.ShowDialog();
+                        }
+                    }
+
+                    class Controller
+                    {
+                        private Form form;
+                        public Controller(Form _form)
+                        {
+                            this.form = _form;
+                            this.form.Click += FormClicked;
+                        }
+
+                        private void FormClicked(object sender, EventArgs e)
+                        {
+                            this.form.Text = DateTime.Now.ToString();
+                        }
+                    }
+                }
+                ```
+
+                </details>
+
+            3. Not commonly used
+
+                <details>
+                <summary>expand to view code</summary>
+
+                ```csharp
+                using System;
+                using System.Windows.Forms;
+
+                namespace Delegate2
+                {
+                    static class Program
+                    {
+                        static void Main()
+                        {
+                            Form1 form1 = new Form1();
+                            form1.Click += form1.Action;
+                            form1.ShowDialog();
+                        }
+                    }
+
+                    class Form1 : Form
+                    {
+                        internal void Action(object sender, EventArgs e)
+                        {
+                            this.Text = DateTime.Now.ToString();
+                        }
+                    }
+                }
+                ```
+
+                </details>
+
+            4. The responder to an event is an object, and the owner of the event is a field member within this event responder object.
+
+                <details>
+                <summary>expand to view code</summary>
+
+                ```csharp
+                
+                using System;
+                using System.Windows.Forms;
+
+                namespace Delegate2
+                {
+                    static class Program
+                    {
+                        static void Main()
+                        {
+                            MyForm myForm = new MyForm();
+                            myForm.ShowDialog();
+                        }
+                    }
+
+                    class MyForm : Form
+                    {
+                        private TextBox textBox;
+                        private Button button;
+
+                        public MyForm()
+                        {
+                            this.textBox = new TextBox();
+                            this.button = new Button();
+                            this.Controls.Add(this.button);
+                            this.Controls.Add(this.textBox);
+                            this.button.Click += this.ButtonClicked;
+                        }
+
+                        private void ButtonClicked(object sender, EventArgs e)
+                        {
+                            Console.WriteLine("Yes");
+                        }
+                    }
+                }
+
+                ```
+
+                </details>
+
+
+        
+        - Function
+            Dynamically update the number of slots when items are added or removed
